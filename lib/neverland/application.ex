@@ -7,20 +7,17 @@ defmodule Neverland.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      NeverlandWeb.Telemetry,
-      Neverland.Repo,
-      {DNSCluster, query: Application.get_env(:neverland, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Neverland.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Neverland.Finch},
-      # Start a worker by calling: Neverland.Worker.start_link(arg)
-      # {Neverland.Worker, arg},
-      # Start to serve requests, typically the last entry
-      {Neverland.Ghost, %{}, name: :ghost_demo1},
-      {Neverland.Ghost, %{}, name: :ghost_demo2},
-      NeverlandWeb.Endpoint
-    ]
+      children = [
+        NeverlandWeb.Telemetry,
+        Neverland.Repo,
+        {DNSCluster, query: Application.get_env(:neverland, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Neverland.PubSub},
+        {Finch, name: Neverland.Finch},
+        Supervisor.child_spec({Neverland.Ghost, name: :ghost_demo1}, id: :ghost_demo1),
+        Supervisor.child_spec({Neverland.Ghost, name: :ghost_demo2}, id: :ghost_demo2),
+        {Neverland.OnlineUsers, name: :online_users},
+        NeverlandWeb.Endpoint
+      ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

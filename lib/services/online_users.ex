@@ -2,11 +2,13 @@ defmodule Neverland.OnlineUsers do
   use GenServer
 
   # 启动GenServer
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(opts \\ []) do
+    name = opts |> Keyword.get(:name, __MODULE__)
+    GenServer.start_link(__MODULE__, %{}, Keyword.put_new(opts, :name, name))
   end
 
   # 添加在线用户
+  @spec add_online_user(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, any()) :: :ok
   def add_online_user(pid, user_type) do
     GenServer.cast(pid, {:add_online, user_type})
   end

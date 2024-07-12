@@ -5,8 +5,8 @@ defmodule Neverland.Ghost do
 
   # 修改start_link以接受:name选项
   def start_link(opts \\ []) do
-    name = Keyword.get(opts, :name, __MODULE__)
-    GenServer.start_link(__MODULE__, %{}, opts |> Keyword.put(:name, name))
+    name = opts |> Keyword.get(:name, __MODULE__)
+    GenServer.start_link(__MODULE__, %{}, Keyword.put_new(opts, :name, name))
   end
 
   # 修改ask_question以接受实例名
