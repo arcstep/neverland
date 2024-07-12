@@ -17,6 +17,8 @@ defmodule Neverland.Application do
       # Start a worker by calling: Neverland.Worker.start_link(arg)
       # {Neverland.Worker, arg},
       # Start to serve requests, typically the last entry
+      {Neverland.Ghost, %{}, name: :ghost_demo1},
+      {Neverland.Ghost, %{}, name: :ghost_demo2},
       NeverlandWeb.Endpoint
     ]
 
