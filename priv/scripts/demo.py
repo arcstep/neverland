@@ -3,7 +3,7 @@ import time  # 导入time模块
 # script.py
 def emit_event(event_name, data):
     print(f">-[{event_name}]>>{data}")
-    time.sleep(0.5)  # 在打印之后休眠0.1秒
+    time.sleep(0.2)  # 在打印之后休眠0.1秒
 
 emit_event('text', 'Human: ')
 emit_event('chunk', '你')

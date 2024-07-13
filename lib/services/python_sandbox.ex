@@ -13,16 +13,16 @@ defmodule Neverland.PythonSandbox do
     {:ok, new_state}
   end
 
-  def run_script(pid, script_name) do
-    GenServer.call(pid, {:run_script, script_name})
+  def run_script(pid, script_name, reply \\ nil) do
+    GenServer.call(pid, {:run_script, script_name, :reply, reply})
   end
 
-  def handle_call({:run_script, script_name}, from, %{scripts_dir: scripts_dir, batches: batches} = state) do
+  def handle_call({:run_script, script_name, :reply, reply}, _from, %{scripts_dir: scripts_dir, batches: batches} = state) do
     python_script_path = Path.join([scripts_dir, script_name])
     port = Port.open({:spawn, "python3 -u #{python_script_path}"}, [:binary, :exit_status])
 
     # 使用Port引用作为键，存储caller信息
-    new_batches = Map.put(batches, port, %{caller: from, output: "", logs: []})
+    new_batches = Map.put(batches, port, %{caller: reply, output: "", logs: []})
 
     # 更新state，包括新的batches映射
     new_state = Map.put(state, :batches, new_batches)
@@ -42,17 +42,12 @@ defmodule Neverland.PythonSandbox do
       %{caller: _caller, output: current_output, logs: current_logs} = batch ->
         case Regex.run(~r/>-\[(.*?)\]>>(.*)/, data, capture: :all_but_first) do
           nil ->
-            # 如果没有匹配到数据，可以选择忽略或者以不同的方式处理
-            # IO.puts(">>>>")
-            # IO.puts(data)
-            # IO.puts("<<<<")
             {:noreply, state}
           [event, data] ->
             # 将事件和数据作为元组添加到logs中
             new_logs = [{event, data} | current_logs]
 
             # 如果事件类型是text或final，则将数据追加到output中
-            # IO.puts(">-[#{event}]>>")
             new_output =
               case event do
                 "text" ->
@@ -67,11 +62,8 @@ defmodule Neverland.PythonSandbox do
               end
 
             # 更新该批次的信息
-            new_batch = Map.put(batch, :output, new_output)
-            new_batch = Map.put(new_batch, :logs, new_logs)
+            new_batch = batch |> Map.put(:output, new_output) |> Map.put(:logs, new_logs)
             new_batches = Map.put(batches, port, new_batch)
-
-            # 更新state
             new_state = Map.put(state, :batches, new_batches)
 
             {:noreply, new_state}
@@ -79,9 +71,18 @@ defmodule Neverland.PythonSandbox do
     end
   end
 
-  def handle_info({_port, {:exit_status, status}}, state) do
+  def handle_info({port, {:exit_status, status}}, %{batches: batches} = state) do
     IO.puts("\nPython script exited with status: #{status}")
+    IO.puts(inspect(port))
     IO.puts(inspect(state))
+    case Map.get(batches, port) do
+      %{caller: caller, output: output} when not is_nil(caller) and output != "" ->
+        IO.puts("sending ...")
+        send(caller, {:script_output, output})
+      _ ->
+        IO.puts("Empty Caller.")
+    end
+
     {:stop, :normal, state}
   end
 
