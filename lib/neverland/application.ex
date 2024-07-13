@@ -13,6 +13,7 @@ defmodule Neverland.Application do
         {DNSCluster, query: Application.get_env(:neverland, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: Neverland.PubSub},
         {Finch, name: Neverland.Finch},
+        {Neverland.PythonSandbox, name: :python_sandbox},
         Supervisor.child_spec({Neverland.Ghost, name: :ghost_demo1}, id: :ghost_demo1),
         Supervisor.child_spec({Neverland.Ghost, name: :ghost_demo2}, id: :ghost_demo2),
         {Neverland.OnlineUsers, name: :online_users},
