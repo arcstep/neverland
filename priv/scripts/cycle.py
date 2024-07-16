@@ -1,24 +1,32 @@
 import time
+import os
 
-def emit_event(event_name, data):
+from langchain_zhipu import ChatZhipuAI
+
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv(), override=True)
+
+def emit_event(event_name, data=""):
     print(f">-[{event_name}]>>{data}")
-    time.sleep(0.1)
+    # time.sleep(0.1)
 
 def process_input(input_str):
-    timestamp = time.strftime("%H:%M:%S", time.localtime())
-    return f"{input_str} at {timestamp}"
+    # timestamp = time.strftime("%H:%M:%S", time.localtime())
+    return input_str
 
 def main():
+    chat = ChatZhipuAI()
     while True:
-        try:
-            input_str = input("请输入字符串: ")
-            if input_str.lower() == 'exit':
-                break
-            combined_str = process_input(input_str)
-            for char in combined_str:
-                emit_event('chunk', char)
-        except (EOFError, KeyboardInterrupt):
+        input_str = input("")
+        if input_str.lower() in ['exit', 'quit']:
             break
+        question = process_input(input_str)
+        for x in chat.stream(question):
+            if isinstance(x, str):
+                emit_event('chunk', x)
+            else:
+                emit_event('chunk', x.content)
+        emit_event('end')
 
 if __name__ == "__main__":
     main()
