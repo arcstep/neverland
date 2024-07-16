@@ -1,4 +1,4 @@
-defmodule Neverland.PythonSandbox do
+defmodule Neverland.SandboxPython do
   use GenServer
 
   def start_link(opts \\ []) do
