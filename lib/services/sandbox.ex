@@ -1,5 +1,4 @@
 defmodule Neverland.Sandbox do
-
   def invoke_command(%{port: port, queue: queue} = state) do
     case queue do
       [] ->
@@ -17,37 +16,35 @@ defmodule Neverland.Sandbox do
     end
   end
 
-  def handle_info(_port, data, %{cur_reply_to: reply_to} = state) do
-    # IO.puts(inspect(port))
-    # IO.puts(inspect(data))
-    {event, processed_data} =
-      case Regex.run(~r/>-\[(.*?)\]>>(.*)/, data, capture: :all_but_first) do
-        nil -> {"text", data}
-        [event, matched_data] -> {event, matched_data}
-      end
-
-    # 处理和转发来自标准IO的消息
-    send(reply_to, {event, processed_data})
-    case event do
-      "text" ->
-        IO.puts(processed_data)
-      "final" ->
-        IO.puts("\n#{processed_data}")
-      "chunk" ->
-        IO.write(processed_data)
-      "info" ->
-        IO.puts(processed_data)
-      "end" ->
-        invoke_command(state)
+  def process_data(data) do
+    case Regex.run(~r/>-\[(.*?)\]>>(.*)/, data, capture: :all_but_first) do
+      nil -> {"text", data}
+      [event, matched_data] -> {event, matched_data}
     end
-
-    {:noreply, state}
   end
 
-  def handle_info(_port, data, state) do
-    IO.puts(data)
-    # 可以在这里添加处理逻辑，或者简单地忽略这个消息
-    {:noreply, state}
+  def process_event(event, processed_data, state, reply_to \\ nil, current_output \\ "") do
+    if reply_to do
+      send(reply_to, {event, processed_data})
+    end
+    case event do
+      "end" ->
+        invoke_command(state)
+      "text" ->
+        IO.puts(processed_data)
+        current_output <> processed_data
+      "final" ->
+        IO.puts("\n" <> processed_data)
+        current_output <> processed_data
+      "chunk" ->
+        IO.write(processed_data)
+        current_output
+      "info" ->
+        IO.puts(processed_data)
+        current_output
+      _ ->
+        current_output
+    end
   end
 
 end

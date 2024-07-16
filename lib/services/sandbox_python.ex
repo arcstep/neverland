@@ -1,5 +1,6 @@
 defmodule Neverland.SandboxPython do
   use GenServer
+  alias Neverland.Sandbox
 
   def start_link(opts \\ []) do
     name = opts |> Keyword.get(:name, __MODULE__)
@@ -47,31 +48,11 @@ defmodule Neverland.SandboxPython do
     case Map.get(batches, port) do
       nil ->
         {:noreply, state}
-      %{reply_to: _reply_to, output: current_output, logs: current_logs} = batch ->
-        {event, processed_data} =
-          case Regex.run(~r/>-\[(.*?)\]>>(.*)/, data, capture: :all_but_first) do
-            nil -> {"text", data}
-            [event, matched_data] -> {event, matched_data}
-          end
+      %{reply_to: reply_to, output: current_output, logs: current_logs} = batch ->
+        {event, processed_data} = Sandbox.process_data(data)
 
         new_logs = [{event, processed_data} | current_logs]
-        new_output =
-          case event do
-            "text" ->
-              IO.puts(processed_data)
-              current_output <> processed_data
-            "final" ->
-              IO.puts("\n" <> processed_data)
-              current_output <> processed_data
-            "chunk" ->
-              IO.write(processed_data)
-              current_output
-            "info" ->
-              IO.puts(processed_data)
-              current_output
-            _ ->
-              current_output
-          end
+        new_output = Sandbox.process_event(event, processed_data, state, reply_to, current_output)
 
         # 更新该批次的信息
         new_batch = batch |> Map.put(:output, new_output) |> Map.put(:logs, new_logs)
@@ -92,7 +73,6 @@ defmodule Neverland.SandboxPython do
         IO.puts("Empty <PID> to reply.")
     end
 
-    # 移除已完成脚本的状态，而不是停止GenServer
     new_batches = Map.delete(batches, port)
     new_state = Map.put(state, :batches, new_batches)
 

@@ -49,13 +49,21 @@ defmodule Neverland.SandboxCycle do
     {:reply, :ok, Sandbox.invoke_command(new_state)}
   end
 
-  def handle_info({port, {:exit_status, status}}, state) when is_port(port) do
+  def handle_info({port, {:exit_status, status}}, state) when is_port(port) when is_port(port) do
     IO.puts("\Command exited with status: #{status} | " <> inspect(port))
     {:stop, :normal, state}
   end
 
-  def handle_info({port, {:data, data}}, state) when is_port(port) do
-    Sandbox.handle_info(port, data, state)
+  def handle_info({port, {:data, data}}, %{cur_reply_to: reply_to} = state) when is_port(port) do
+    {event, processed_data} = Sandbox.process_data(data)
+    Sandbox.process_event(event, processed_data, state, reply_to)
+
+    {:noreply, state}
+  end
+
+  def handle_info(_port, data, state) do
+    IO.puts(data)
+    {:noreply, state}
   end
 
 end
