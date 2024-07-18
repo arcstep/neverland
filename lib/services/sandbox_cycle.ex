@@ -1,16 +1,31 @@
 defmodule Neverland.SandboxCycle do
+  @moduledoc """
+  `Neverland.SandboxCycle` 模块用于启动和管理一个循环模式的命令行进程。
+  该进程支持标准输入和标准输出，允许与外部脚本进行交互。
+  """
+
   use GenServer
   alias Neverland.Sandbox
 
-  @spec start_link(keyword()) :: :ignore | {:error, any()} | {:ok, pid()}
   @doc """
-  启动一个命令行。
-  支持标准输入和标准输出。
+  启动一个命令行进程。
+
+  ## 参数
+
+    - `opts` - 启动进程时的选项，可以包含:
+      - `:name` - 进程的名称。
+      - `:command` - 要执行的命令，默认为 `"python3 -u ./priv/scripts/chat.py"`。
+
+  ## 返回值
+
+    - `:ignore` - 如果进程被忽略。
+    - `{:error, any()}` - 如果启动过程中发生错误。
+    - `{:ok, pid()}` - 如果进程成功启动，返回进程ID。
   """
   def start_link(opts \\ []) do
     name = opts |> Keyword.get(:name, __MODULE__)
     # default_path = "/Users/xuehongwei/.pyenv/versions/3.10.9/bin/python"
-    default_cmd = "python3 -u ./priv/scripts/cycle.py"
+    default_cmd = "python3 -u ./priv/scripts/chat.py"
     command = opts |> Keyword.get(:command,  default_cmd)
     GenServer.start_link(
       __MODULE__,
@@ -27,7 +42,6 @@ defmodule Neverland.SandboxCycle do
     {:ok, new_state}
   end
 
-  @spec invoke(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: any()
   @doc """
   通过标准输入调用指令。
   """
