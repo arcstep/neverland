@@ -17,6 +17,8 @@ defmodule NeverlandWeb.Router do
   scope "/", NeverlandWeb do
     pipe_through :browser
 
+    get "/users", UserController, :index
+    get "/users/:id", UserController, :show
     get "/hello", HelloController, :world
     get "/help", HelloController, :help
     get "/", PageController, :home
