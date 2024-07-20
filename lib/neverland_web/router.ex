@@ -20,6 +20,7 @@ defmodule NeverlandWeb.Router do
     get "/users", UserController, :index
     get "/users/:id", UserController, :show
     get "/hello", HelloController, :world
+    get "/hello/:messenger", HelloController, :show
     get "/help", HelloController, :help
     get "/", PageController, :home
   end
