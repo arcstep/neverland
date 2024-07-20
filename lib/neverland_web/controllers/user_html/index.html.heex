@@ -1,0 +1,10 @@
+<h1>Listing Users</h1>
+<.flash_group flash={@flash} />
+<table>
+    <%= for user <- @users do %>
+    <tr>
+        <td><b><%= first_name(user) %></b> (<%= user.id %>)</td>
+        <td><a href={"user/show/#{user.id}"}>View</a></td>
+    </tr>
+    <% end %>
+</table>
