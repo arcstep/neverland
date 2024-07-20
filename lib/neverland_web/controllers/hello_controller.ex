@@ -10,7 +10,8 @@ defmodule NeverlandWeb.HelloController do
   end
 
   def show(conn, %{"messenger" => messenger}) do
-    render(conn, :show, messenger: messenger)
+    message = "你好哦"
+    render(conn, :show, messenger: messenger, message: message)
   end
 
 end

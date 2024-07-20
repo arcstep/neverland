@@ -6,9 +6,10 @@ defmodule NeverlandWeb.HelloHTML do
   embed_templates "hello_html/*"
 
   attr :message, :string, required: true
+  attr :messenger, :string, required: true
   def greet(assigns) do
     ~H"""
-    <h2>Hello World, from <%= @messenger %>!</h2>
+    <h2>来自 [<%= @messenger %>] 的消息: <%= @message %>!</h2>
     """
   end
 
