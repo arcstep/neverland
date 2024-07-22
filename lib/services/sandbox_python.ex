@@ -57,7 +57,7 @@ defmodule Neverland.SandboxPython do
   end
 
   def handle_info({port, {:data, data}}, %{batches: batches} = state) do
-    IO.puts(inspect(port))
+    # IO.puts(inspect(port))
     case Map.get(batches, port) do
       nil ->
         {:noreply, state}

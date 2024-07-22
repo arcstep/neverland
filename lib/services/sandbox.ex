@@ -10,9 +10,9 @@ defmodule Neverland.Sandbox do
     if reply_to do
       send(reply_to, {:thread_id, thread_id, :event, event, :output, processed_data})
     end
-    case event do
+    case String.downcase(event) do
       "text" ->
-        IO.puts(processed_data)
+        IO.write(processed_data)
         current_output <> processed_data
       "chunk" ->
         IO.write(processed_data)
@@ -23,6 +23,8 @@ defmodule Neverland.Sandbox do
       "info" ->
         IO.puts(processed_data)
         current_output
+      "end" ->
+        send(reply_to, {:thread_id, thread_id, :event, "output", :output, current_output})
       _ ->
         current_output
     end
