@@ -14,11 +14,16 @@ defmodule Neverland.SandboxPython do
     {:ok, new_state}
   end
 
-  def run_script(pid, script_name, reply_to \\ nil, thread_id \\ nil) do
-    GenServer.call(pid, {:run_script, script_name, :reply_to, reply_to, :thread_id, thread_id})
+  @doc """
+  - script_name 表示所调用脚本，支持参数化
+  - reply_to 代表一个调用者
+  - thread_id 代表一次调用，即调用者发起过多次平行调用
+  """
+  def invoke(pid, script_name, reply_to \\ nil, thread_id \\ nil) do
+    GenServer.call(pid, {:invoke, script_name, :reply_to, reply_to, :thread_id, thread_id})
   end
 
-  def handle_call({:run_script, script_name, :reply_to, reply_to, :thread_id, thread_id}, _from, state) do
+  def handle_call({:invoke, script_name, :reply_to, reply_to, :thread_id, thread_id}, _from, state) do
     python_script_path = Path.join([state.scripts_dir, script_name])
     # 为每个脚本创建独立的Port
     port = Port.open(
@@ -48,11 +53,11 @@ defmodule Neverland.SandboxPython do
     case Map.get(batches, port) do
       nil ->
         {:noreply, state}
-      %{reply_to: reply_to, output: current_output, logs: current_logs} = batch ->
+      %{reply_to: reply_to, thread_id: thread_id, output: current_output, logs: current_logs} = batch ->
         {event, processed_data} = Sandbox.process_data(data)
 
         new_logs = [{event, processed_data} | current_logs]
-        new_output = Sandbox.process_event(event, processed_data, state, reply_to, current_output)
+        new_output = Sandbox.process_event(event, processed_data, thread_id, reply_to, current_output)
 
         # 更新该批次的信息
         new_batch = batch |> Map.put(:output, new_output) |> Map.put(:logs, new_logs)
@@ -68,7 +73,7 @@ defmodule Neverland.SandboxPython do
     case Map.get(batches, port) do
       %{reply_to: reply_to, thread_id: thread_id, output: output} when not is_nil(reply_to) and output != "" ->
         IO.puts("Sending final output to " <> inspect(reply_to))
-        send(reply_to, {:output, output, :thread_id, thread_id})
+        send(reply_to, {:thread_id, thread_id, :event, :exit, :output, output})
       _ ->
         IO.puts("Empty <PID> to reply.")
     end
