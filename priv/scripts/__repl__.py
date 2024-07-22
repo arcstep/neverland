@@ -1,3 +1,4 @@
+####################################################################################################
 # list functions
 globals_copy = globals().copy()
 allowed_functions = [name for name, obj in globals_copy.items() if callable(obj) and not name.startswith('__')]

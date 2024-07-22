@@ -1,13 +1,34 @@
-import argparse
-from langchain_zhipu import ChatZhipuAI
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
+import os
 
-def emit_event(event_name, data):
-    print(f">-[{event_name}]>>{data}")
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+win = ConversationBufferWindowMemory(k=20, return_messages=True)
+
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_zhipu import ChatZhipuAI
+from langchain_core.output_parsers import StrOutputParser
+from textlong.memory import MemoryManager, WithMemoryBinding
+
+# 定义chain
+model = ChatZhipuAI()
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "给我一个名字即可，不要输出其他。"),
+        MessagesPlaceholder(variable_name="history"),
+        ("human", "{input}"),
+    ]
+)
+chain = prompt | model
+
+# 定义记忆体
+memory = MemoryManager()
+
+# 记忆绑定管理
+withMemoryChain = WithMemoryBinding(chain, memory)
 
 def chat(message: str):
-    for x in ChatZhipuAI().stream(message):
+    for x in withMemoryChain.stream({"input": message}):
         print(x.content, end="")
 
     print(">-[END]>>")
@@ -15,4 +36,4 @@ def chat(message: str):
 
 # Example
 
-chat("请帮我起一个公司名字") # chat with ZhipuAI
+# chat("请帮我起一个公司名字") # chat with ZhipuAI

@@ -37,18 +37,10 @@ defmodule Neverland.Sandbox do
   """
   def fetch_code_and_save(paths_parts) do
     path = Enum.join(paths_parts, "/")
+
     script_content = File.read!(path)
-
-    regex = ~r/^(.*?)(?=\s*#.*\bexample\b)/smi
-
-    script_code =
-      case Regex.run(regex, script_content) do
-        [matched_content | _] -> matched_content
-        nil -> script_content
-      end
-
     repl_code = File.read!("priv/scripts/__repl__.py")
-    full_code = "#{script_code}\n\n#{repl_code}"
+    full_code = "#{script_content}\n\n#{repl_code}"
 
     string_without_py =
       case String.ends_with?(path, ".py") do
