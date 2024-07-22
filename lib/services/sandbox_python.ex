@@ -5,13 +5,17 @@ defmodule Neverland.SandboxPython do
   def start_link(opts \\ []) do
     name = opts |> Keyword.get(:name, __MODULE__)
     scripts_dir = opts |> Keyword.get(:scripts_dir, "./priv/scripts")
-    GenServer.start_link(__MODULE__, %{scripts_dir: scripts_dir, buffer: "", port: nil}, Keyword.put_new(opts, :name, name))
+    GenServer.start_link(__MODULE__, %{scripts_dir: scripts_dir}, Keyword.put_new(opts, :name, name))
   end
 
   def init(state) do
     # 确保在初始状态中包含batches键，初始值为空映射
     new_state = Map.put_new(state, :batches, %{})
     {:ok, new_state}
+  end
+
+  def get_state(pid) do
+    GenServer.call(pid, :get_state)
   end
 
   @doc """
@@ -21,6 +25,10 @@ defmodule Neverland.SandboxPython do
   """
   def invoke(pid, script_name, reply_to \\ nil, thread_id \\ nil) do
     GenServer.call(pid, {:invoke, script_name, :reply_to, reply_to, :thread_id, thread_id})
+  end
+
+  def handle_call(:get_state, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call({:invoke, script_name, :reply_to, reply_to, :thread_id, thread_id}, _from, state) do
@@ -53,6 +61,7 @@ defmodule Neverland.SandboxPython do
     case Map.get(batches, port) do
       nil ->
         {:noreply, state}
+
       %{reply_to: reply_to, thread_id: thread_id, output: current_output, logs: current_logs} = batch ->
         {event, processed_data} = Sandbox.process_data(data)
 
@@ -70,14 +79,6 @@ defmodule Neverland.SandboxPython do
 
   def handle_info({port, {:exit_status, status}}, %{batches: batches} = state) do
     IO.puts("\nPython script exited with status: #{status} | " <> inspect(port))
-    case Map.get(batches, port) do
-      %{reply_to: reply_to, thread_id: thread_id, output: output} when not is_nil(reply_to) and output != "" ->
-        IO.puts("Sending final output to " <> inspect(reply_to))
-        send(reply_to, {:thread_id, thread_id, :event, :exit, :output, output})
-      _ ->
-        IO.puts("Empty <PID> to reply.")
-    end
-
     new_batches = Map.delete(batches, port)
     new_state = Map.put(state, :batches, new_batches)
 

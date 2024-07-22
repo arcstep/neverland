@@ -14,11 +14,11 @@ defmodule Neverland.Sandbox do
       "text" ->
         IO.puts(processed_data)
         current_output <> processed_data
-      "final" ->
-        IO.puts("\n" <> processed_data)
-        current_output <> processed_data
       "chunk" ->
         IO.write(processed_data)
+        current_output <> processed_data
+      "final" ->
+        IO.puts("\n" <> processed_data)
         current_output
       "info" ->
         IO.puts(processed_data)

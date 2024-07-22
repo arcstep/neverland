@@ -2,6 +2,9 @@ import argparse
 from langchain_zhipu import ChatZhipuAI
 from dotenv import load_dotenv, find_dotenv
 
+# def emit_event(event_name, data):
+#     print(f">-[{event_name}]>>{data}")
+
 def main():
     # 加载环境变量
     load_dotenv(find_dotenv(), override=True)
@@ -16,7 +19,7 @@ def main():
 
     # 使用命令行参数作为消息
     for x in ChatZhipuAI().stream(args.message):
-        print(x.content, end="")
+        emit_event("chunk", "")
 
 if __name__ == "__main__":
     main()
