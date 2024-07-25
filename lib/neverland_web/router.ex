@@ -48,7 +48,6 @@ defmodule NeverlandWeb.Router do
     end
   end
 
-
   ## Authentication routes
 
   scope "/", NeverlandWeb do
@@ -72,6 +71,7 @@ defmodule NeverlandWeb.Router do
       on_mount: [{NeverlandWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/guess", WrongLive
     end
   end
 
