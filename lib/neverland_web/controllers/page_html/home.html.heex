@@ -167,20 +167,20 @@
     <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
       Neverland
       <small class="bg-brand/5 text-[0.8125rem] ml-3 rounded-full px-2 font-medium leading-6">
-        v<%= Application.spec(:nev, :vsn) %>
+        v<%= Application.spec(:neverland, :vsn) %>
       </small>
     </h1>
     <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter text-zinc-900 text-balance">
       梦幻岛
     </p>
     <p class="mt-4 text-base leading-7 text-zinc-600">
-      基于私有知识库的数字人计划。
+      为了你的数字人，建立私有知识库
     </p>
     <div class="flex">
       <div class="w-full sm:w-auto">
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
           <a
-            href="https://hexdocs.pm/phoenix/overview.html"
+            href="/docs/guide"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
           >
             <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -196,11 +196,11 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              Guides &amp; Docs
+              文档指南
             </span>
           </a>
           <a
-            href="https://github.com/phoenixframework/phoenix"
+            href="https://github.com/arcstep/neverland"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
           >
             <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -214,11 +214,11 @@
                   fill="#18181B"
                 />
               </svg>
-              Source Code
+              开放源码
             </span>
           </a>
           <a
-            href={"https://github.com/phoenixframework/phoenix/blob/v#{Application.spec(:phoenix, :vsn)}/CHANGELOG.md"}
+            href={"https://github.com/arcstep/neverland/blob/v#{Application.spec(:neverland, :vsn)}/CHANGELOG.md"}
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
           >
             <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -244,7 +244,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              Changelog
+              更新发布
             </span>
           </a>
         </div>
