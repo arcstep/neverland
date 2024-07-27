@@ -1,4 +1,15 @@
 defmodule Neverland.Ghost do
+  @doc """
+  - 大模型思考
+  - 检索常驻概念图
+  - 自动更新常驻概念图
+  - 检索知识概念图
+  - 补充知识概念图
+  - 资料阅读
+  - 文档写作
+  - 自我训练：基于知识概念图
+
+  """
   use GenServer
 
   # Public API
@@ -21,7 +32,8 @@ defmodule Neverland.Ghost do
   end
 
   def handle_call({:ask_question, question}, _from, state) do
-    answer = "这是对‘#{question}’的回答。" # 这里可以实现更复杂的逻辑
+    # 这里可以实现更复杂的逻辑
+    answer = "这是对‘#{question}’的回答。"
     {:reply, answer, state}
   end
 end
