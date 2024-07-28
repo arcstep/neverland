@@ -36,6 +36,17 @@ defmodule Neverland.SandboxPython do
     GenServer.call(pid, {:input, input, :thread_id, thread_id})
   end
 
+  def exit_all_scripts(pid) do
+    # 列举所有端口，并向所有端口发送 exit 命令
+    state = get_state(pid)
+    batches = state.batches
+
+    exit_cmd = :erlang.iolist_to_binary(~c"exit")
+
+    batches
+    |> Enum.each(fn {_port, %{thread_id: thread_id}} -> input(pid, exit_cmd, thread_id) end)
+  end
+
   def find_batch(batches, thread_id) do
     case Enum.filter(batches, fn {_port, details} -> details.thread_id == thread_id end) do
       [head | _] -> head
