@@ -43,11 +43,10 @@ defmodule Neverland.SandboxPython do
 
     state.batches
     |> Enum.each(fn {port, %{thread_id: thread_id}} ->
-      input(pid, "exit", thread_id)
       IO.puts("closing port: #{inspect(port)}, thread_id: #{inspect(thread_id)}")
-      # send(port, {pid, {:command, "exit\n"}})
+      send(port, {pid, {:command, "exit\n"}})
       Process.sleep(100)
-      # send(port, {self(), :close})
+      send(port, {self(), :close})
     end)
   end
 
