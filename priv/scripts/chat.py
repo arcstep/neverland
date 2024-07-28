@@ -2,9 +2,6 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
 import os
 
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
-win = ConversationBufferWindowMemory(k=20, return_messages=True)
-
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_zhipu import ChatZhipuAI
 from langchain_core.output_parsers import StrOutputParser

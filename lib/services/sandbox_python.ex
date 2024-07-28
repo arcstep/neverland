@@ -37,14 +37,18 @@ defmodule Neverland.SandboxPython do
   end
 
   def exit_all_scripts(pid) do
-    # 列举所有端口，并向所有端口发送 exit 命令
+    IO.puts("closing all Python ports...")
+
     state = get_state(pid)
-    batches = state.batches
 
-    exit_cmd = :erlang.iolist_to_binary(~c"exit")
-
-    batches
-    |> Enum.each(fn {_port, %{thread_id: thread_id}} -> input(pid, exit_cmd, thread_id) end)
+    state.batches
+    |> Enum.each(fn {port, %{thread_id: thread_id}} ->
+      input(pid, "exit", thread_id)
+      IO.puts("closing port: #{inspect(port)}, thread_id: #{inspect(thread_id)}")
+      # send(port, {pid, {:command, "exit\n"}})
+      Process.sleep(100)
+      # send(port, {self(), :close})
+    end)
   end
 
   def find_batch(batches, thread_id) do
@@ -120,5 +124,12 @@ defmodule Neverland.SandboxPython do
     new_state = Map.put(state, :batches, new_batches)
 
     {:noreply, new_state}
+  end
+
+  # 在 GenServer 终止时清理所有 Python 进程
+  def terminate(reason, _state) do
+    IO.puts("Process #{inspect(self())} is being terminated because: #{inspect(reason)}")
+    exit_all_scripts(self())
+    :ok
   end
 end

@@ -2,9 +2,6 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
 import os
 
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
-win = ConversationBufferWindowMemory(k=20, return_messages=True)
-
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_zhipu import ChatZhipuAI
 from langchain_core.output_parsers import StrOutputParser
@@ -38,35 +35,32 @@ def chat(message: str):
 
 # chat("请帮我起一个公司名字") # chat with ZhipuAI
 
-####################################################################################################
-# list functions
-globals_copy = globals().copy()
-allowed_functions = [name for name, obj in globals_copy.items() if callable(obj) and not name.startswith('__')]
-print(allowed_functions)
+import ast
+import sys
+import io
 
-# execute function
-def execute_function(func_name, *args):
-    if func_name in allowed_functions:
-        print(func_name, *args)
-        function = globals_copy.get(func_name)
-        function(*args)
-    else:
-        print(f"Function '{func_name}' is not allowed.")
+def global_vars():
+    return [name for name, obj in globals().items() if not name.startswith('__')]
 
-# REPL
-while True:
-    user_input = input("")
-    if user_input.lower() == 'exit':
-        break
-    try:
-        parts = user_input.split('(', 1)
-        func_name = parts[0].strip()
-        if len(parts) > 1:
-            args_str = parts[1].rstrip(')')
-            args = eval(f"[{args_str}]")
-        else:
-            args = []
-        
-        execute_function(func_name, *args)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+class REPL:
+    def __init__(self):
+        self.globals_copy = globals().copy()
+
+    def start(self):
+        while True:
+            try:
+                user_input = input("")
+                if user_input.lower() == 'exit':
+                    break
+                # 允许执行表达式，但不允许定义变量、函数或类
+                eval_result = eval(user_input, self.globals_copy)
+                if eval_result is not None:
+                    print(eval_result)
+            except EOFError:
+                break
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+# 创建 REPL 实例并启动
+repl_instance = REPL()
+repl_instance.start()
