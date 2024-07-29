@@ -1,25 +1,24 @@
 <.header>
-  Info <%= @info.id %>
-  <:subtitle>This is a info record from your database.</:subtitle>
+  <%= @info.title %>
+  <:subtitle>项目基本信息</:subtitle>
   <:actions>
     <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit info</.button>
+      <.button>编辑项目</.button>
     </.link>
   </:actions>
 </.header>
 
 <.list>
-  <:item title="Id"><%= @info.id %></:item>
-  <:item title="Title"><%= @info.title %></:item>
-  <:item title="Description"><%= @info.description %></:item>
-  <:item title="Public"><%= @info.public %></:item>
-  <:item title="Inserted at"><%= @info.inserted_at %></:item>
-  <:item title="Updated at"><%= @info.updated_at %></:item>
-  <:item title="Owner"><%= @info.owner %></:item>
-  <:item title="State"><%= @info.state %></:item>
+  <:item title="项目ID"><%= @info.id %></:item>
+  <:item title="项目描述"><%= @info.description %></:item>
+  <:item title="项目公开"><%= @info.public %></:item>
+  <:item title="创建于"><%= @info.inserted_at %></:item>
+  <:item title="更新于"><%= @info.updated_at %></:item>
+  <:item title="拥有者"><%= @info.owner %></:item>
+  <:item title="项目状态"><%= @info.state %></:item>
 </.list>
 
-<.back navigate={~p"/projects"}>Back to infos</.back>
+<.back navigate={~p"/projects"}>返回项目列表</.back>
 
 <.modal
   :if={@live_action == :edit}

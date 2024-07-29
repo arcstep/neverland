@@ -37,7 +37,7 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :infos, Project.list_infos())}
+    {:ok, stream(socket, :infos, Project.list_infos(1, 10))}
   end
 
   @impl true

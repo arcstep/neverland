@@ -7,12 +7,28 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     user = socket.assigns.current_user
-    {:ok, stream(assign(socket, :email, user.email), :infos, Project.list_infos())}
+    # Project.list_infos(1, 10)
+    infos = []
+
+    {:ok,
+     socket
+     |> assign(email: user.email, page: 1, per_page: 10, cur_page_length: length(infos))
+     |> stream(:infos, infos)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    page = Map.get(params, "page", "1") |> String.to_integer()
+    per_page = socket.assigns.per_page
+    infos = Project.list_infos(page, per_page)
+
+    IO.puts("page: #{page}, per_page: #{per_page}")
+
+    {:noreply,
+     socket
+     |> assign(cur_page_length: length(infos), page: page, per_page: per_page)
+     |> apply_action(socket.assigns.live_action, params)
+     |> stream(:infos, infos)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do

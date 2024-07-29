@@ -17,8 +17,12 @@ defmodule Neverland.Project do
       [%Info{}, ...]
 
   """
-  def list_infos do
-    Repo.all(Info)
+  def list_infos(page, per_page) do
+    Info
+    |> order_by([i], asc: i.inserted_at)
+    |> limit(^per_page)
+    |> offset(^((page - 1) * per_page))
+    |> Repo.all()
   end
 
   @doc """

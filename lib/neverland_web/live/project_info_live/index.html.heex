@@ -1,5 +1,5 @@
 <.header>
-  Listing Project Infos
+  项目列表
   <:actions>
     <.link patch={~p"/projects/new"}>
       <.button>新项目</.button>
@@ -12,29 +12,34 @@
   rows={@streams.infos}
   row_click={fn {_id, info} -> JS.navigate(~p"/projects/#{info}") end}
 >
-  <:col :let={{_id, info}} label="Id"><%= info.id %></:col>
-  <:col :let={{_id, info}} label="Title"><%= info.title %></:col>
-  <:col :let={{_id, info}} label="Description"><%= info.description %></:col>
-  <:col :let={{_id, info}} label="Public"><%= info.public %></:col>
-  <:col :let={{_id, info}} label="Inserted at"><%= info.inserted_at %></:col>
-  <:col :let={{_id, info}} label="Updated at"><%= info.updated_at %></:col>
-  <:col :let={{_id, info}} label="Owner"><%= info.owner %></:col>
-  <:col :let={{_id, info}} label="State"><%= info.state %></:col>
+  <:col :let={{_id, info}} label="项目ID"><%= info.id %></:col>
+  <:col :let={{_id, info}} label="标题"><%= info.title %></:col>
+  <:col :let={{_id, info}} label="更新于"><%= info.updated_at %></:col>
+  <:col :let={{_id, info}} label="项目状态"><%= info.state %></:col>
   <:action :let={{_id, info}}>
     <div class="sr-only">
-      <.link navigate={~p"/projects/#{info}"}>Show</.link>
+      <.link navigate={~p"/projects/#{info}"}>查看</.link>
     </div>
-    <.link patch={~p"/projects/#{info}/edit"}>Edit</.link>
+    <.link patch={~p"/projects/#{info}/edit"}>编辑</.link>
   </:action>
   <:action :let={{id, info}}>
     <.link
       phx-click={JS.push("delete", value: %{id: info.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
-      Delete
+      删除
     </.link>
   </:action>
 </.table>
+
+<div class="pagination">
+  <%= if @page > 1 do %>
+    <.link navigate={~p"/projects?page=#{@page - 1}"}>上页</.link>
+  <% end %>
+  <%= if @cur_page_length == @per_page do %>
+    <.link navigate={~p"/projects?page=#{@page + 1}"}>下页</.link>
+  <% end %>
+</div>
 
 <.modal
   :if={@live_action in [:new, :edit]}
