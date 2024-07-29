@@ -31,6 +31,10 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
     """
   end
 
+  def mount(_params, _session, socket) do
+    {:ok, stream(socket, :infos, Project.list_infos())}
+  end
+
   @impl true
   def update(%{info: info} = assigns, socket) do
     {:ok,
@@ -48,6 +52,7 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
   end
 
   def handle_event("save", %{"info" => info_params}, socket) do
+    IO.puts("save form: #{inspect(socket.assigns)}")
     save_info(socket, socket.assigns.action, info_params)
   end
 
@@ -67,7 +72,13 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
   end
 
   defp save_info(socket, :new, info_params) do
-    case Project.create_info(info_params) do
+    new_info_params =
+      info_params
+      |> Map.put("inserted_at", DateTime.utc_now())
+      |> Map.put("updated_at", DateTime.utc_now())
+      |> Map.put("owner", socket.assigns.email)
+
+    case Project.create_info(new_info_params) do
       {:ok, info} ->
         notify_parent({:saved, info})
 

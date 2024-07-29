@@ -2,7 +2,7 @@
   Info <%= @info.id %>
   <:subtitle>This is a info record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/infos/#{@info}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit info</.button>
     </.link>
   </:actions>
@@ -10,23 +10,29 @@
 
 <.list>
   <:item title="Id"><%= @info.id %></:item>
+  <:item title="Title"><%= @info.title %></:item>
   <:item title="Description"><%= @info.description %></:item>
   <:item title="Public"><%= @info.public %></:item>
-  <:item title="Created at"><%= @info.created_at %></:item>
+  <:item title="Inserted at"><%= @info.inserted_at %></:item>
   <:item title="Updated at"><%= @info.updated_at %></:item>
   <:item title="Owner"><%= @info.owner %></:item>
   <:item title="State"><%= @info.state %></:item>
 </.list>
 
-<.back navigate={~p"/infos"}>Back to infos</.back>
+<.back navigate={~p"/projects"}>Back to infos</.back>
 
-<.modal :if={@live_action == :edit} id="info-modal" show on_cancel={JS.patch(~p"/infos/#{@info}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="info-modal"
+  show
+  on_cancel={JS.patch(~p"/projects/#{@info}")}
+>
   <.live_component
-    module={NeverlandWeb.InfoLive.FormComponent}
+    module={NeverlandWeb.ProjectInfoLive.FormComponent}
     id={@info.id}
     title={@page_title}
     action={@live_action}
     info={@info}
-    patch={~p"/infos/#{@info}"}
+    patch={~p"/projects/#{@info}"}
   />
 </.modal>

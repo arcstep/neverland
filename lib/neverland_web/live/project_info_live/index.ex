@@ -6,7 +6,8 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :infos, Project.list_infos())}
+    user = socket.assigns.current_user
+    {:ok, stream(assign(socket, :email, user.email), :infos, Project.list_infos())}
   end
 
   @impl true
@@ -16,7 +17,7 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Info")
+    |> assign(:page_title, "编辑项目信息")
     |> assign(:info, Project.get_info!(id))
   end
 
@@ -33,7 +34,7 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
   end
 
   @impl true
-  def handle_info({NeverlandWeb.InfoLive.FormComponent, {:saved, info}}, socket) do
+  def handle_info({NeverlandWeb.ProjectInfoLive.FormComponent, {:saved, info}}, socket) do
     {:noreply, stream_insert(socket, :infos, info)}
   end
 
