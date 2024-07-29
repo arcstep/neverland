@@ -78,6 +78,12 @@ defmodule NeverlandWeb.Router do
       live "/products/:id/edit", ProductLive.Index, :edit
       live "/products/:id", ProductLive.Show, :show
       live "/products/:id/show/edit", ProductLive.Show, :edit
+
+      live "/projects", Project.InfoLive.Index, :index
+      live "/projects/new", Project.InfoLive.Index, :new
+      live "/projects/:id/edit", Project.InfoLive.Index, :edit
+      live "/projects/:id", Project.InfoLive.Show, :show
+      live "/projects/:id/show/edit", Project.InfoLive.Show, :edit
     end
   end
 
