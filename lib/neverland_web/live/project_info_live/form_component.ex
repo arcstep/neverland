@@ -43,8 +43,8 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
   @impl true
   def update(%{info: info} = assigns, socket) do
     new_info =
-      case info do
-        %Project.Info{} ->
+      case info.id do
+        nil ->
           {:ok, init_info} = Project.create_info(%{})
           init_info
 
@@ -52,7 +52,8 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
           info
       end
 
-    IO.puts("new_info: #{inspect(new_info)}")
+    # IO.puts("info: #{inspect(info)}")
+    # IO.puts("new_info: #{inspect(new_info)}")
     changeset = Project.change_info(new_info)
 
     {:ok,

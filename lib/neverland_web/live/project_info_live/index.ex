@@ -22,7 +22,7 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
     per_page = socket.assigns.per_page
     infos = Project.list_infos(page, per_page)
 
-    IO.puts("page: #{page}, per_page: #{per_page}")
+    # IO.puts("page: #{page}, per_page: #{per_page}")
 
     {:noreply,
      socket
