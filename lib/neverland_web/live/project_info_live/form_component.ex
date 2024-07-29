@@ -22,7 +22,12 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
         <.input field={@form[:title]} type="text" label="标题" />
         <.input field={@form[:description]} type="text" label="描述" />
         <.input field={@form[:public]} type="checkbox" label="是否公开" />
-        <.input field={@form[:state]} type="text" label="项目状态" />
+        <.input
+          field={@form[:state]}
+          type="select"
+          label="项目状态"
+          options={[{"等待", "wait"}, {"待办", "todo"}, {"完成", "done"}]}
+        />
         <:actions>
           <.button phx-disable-with="保存...">保存项目基本信息</.button>
         </:actions>
@@ -37,11 +42,24 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
 
   @impl true
   def update(%{info: info} = assigns, socket) do
+    new_info =
+      case info do
+        %Project.Info{} ->
+          {:ok, init_info} = Project.create_info(%{})
+          init_info
+
+        _ ->
+          info
+      end
+
+    IO.puts("new_info: #{inspect(new_info)}")
+    changeset = Project.change_info(new_info)
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign_new(:form, fn ->
-       to_form(Project.change_info(info))
+       to_form(changeset)
      end)}
   end
 
@@ -52,7 +70,6 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
   end
 
   def handle_event("save", %{"info" => info_params}, socket) do
-    IO.puts("save form: #{inspect(socket.assigns)}")
     save_info(socket, socket.assigns.action, info_params)
   end
 

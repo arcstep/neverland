@@ -16,7 +16,7 @@ defmodule Neverland.Project.Info do
   def changeset(info, attrs) do
     info
     |> cast(attrs, [:title, :description, :public, :owner, :state])
-    |> validate_required([:description, :public, :owner, :state])
+    |> validate_required([:title, :public, :state])
     |> validate_inclusion(:state, ["todo", "done", "wait"])
   end
 end

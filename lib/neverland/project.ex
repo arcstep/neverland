@@ -50,7 +50,7 @@ defmodule Neverland.Project do
 
   """
   def create_info(attrs \\ %{}) do
-    %Info{}
+    %Info{public: false, state: "wait", title: "项目标题", description: "项目描述"}
     |> Info.changeset(attrs)
     |> Repo.insert()
   end
