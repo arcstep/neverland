@@ -105,4 +105,12 @@ defmodule Neverland.Project do
   def change_info(%Info{} = info, attrs \\ %{}) do
     Info.changeset(info, attrs)
   end
+
+  @doc """
+  获得项目的文件位置路径。
+  """
+  def get_project_path(id) do
+    # 从配置文件中获得项目文件所在的路径
+    "#{Application.get_env(:neverland, :project_path)}/#{id}"
+  end
 end
