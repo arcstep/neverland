@@ -33,19 +33,19 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "编辑项目信息")
+    |> assign(:page_title, "🦋 编辑项目信息")
     |> assign(:info, Project.get_info!(id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "创建新项目")
+    |> assign(:page_title, "🦋 创建新项目")
     |> assign(:info, %Info{})
   end
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Infos")
+    |> assign(:page_title, "🦋 Listing Infos")
     |> assign(:info, nil)
   end
 

@@ -16,6 +16,6 @@ defmodule NeverlandWeb.Project.InfoLive.Show do
      |> assign(:info, Project.get_info!(id))}
   end
 
-  defp page_title(:show), do: "项目基本信息"
-  defp page_title(:edit), do: "编辑项目基本信息"
+  defp page_title(:show), do: "🦋 项目基本信息"
+  defp page_title(:edit), do: "🦋 编辑项目基本信息"
 end
