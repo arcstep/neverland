@@ -20,6 +20,7 @@
     <div class="sr-only">
       <.link navigate={~p"/projects/#{info}"}>查看</.link>
     </div>
+    <.link patch={~p"/projects/#{info}/writing/edit"}>写作</.link>
     <.link patch={~p"/projects/#{info}/edit"}>编辑</.link>
   </:action>
   <:action :let={{id, info}}>

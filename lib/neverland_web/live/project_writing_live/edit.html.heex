@@ -1,0 +1,37 @@
+<.header>
+  <%= @info.title %>
+  <:subtitle>AI长文写作</:subtitle>
+  <:actions>
+    <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>修改项目信息</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="项目ID"><%= @info.id %></:item>
+  <:item title="项目描述"><%= @info.description %></:item>
+  <:item title="项目公开"><%= @info.public %></:item>
+  <:item title="创建于"><%= @info.inserted_at %></:item>
+  <:item title="更新于"><%= @info.updated_at %></:item>
+  <:item title="拥有者"><%= @info.owner %></:item>
+  <:item title="项目状态"><%= @info.state %></:item>
+</.list>
+
+<.back navigate={~p"/projects"}>返回项目列表</.back>
+
+<%!-- <.modal
+  :if={@live_action == :edit}
+  id="info-modal"
+  show
+  on_cancel={JS.patch(~p"/projects/#{@info}")}
+>
+  <.live_component
+    module={NeverlandWeb.ProjectInfoLive.FormComponent}
+    id={@info.id}
+    title={@page_title}
+    action={@live_action}
+    info={@info}
+    patch={~p"/projects/#{@info}"}
+  />
+</.modal> --%>
