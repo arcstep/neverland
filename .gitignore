@@ -41,3 +41,5 @@ npm-debug.log
 .env
 priv/scripts/__pycache__/
 priv/scripts/*__repl__.py
+
+node_modules/

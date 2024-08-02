@@ -8,6 +8,10 @@
   </:actions>
 </.header>
 
+<div class="markdown-body">
+  <%= raw(@html_content) %>
+</div>
+
 <.list>
   <:item title="项目ID"><%= @info.id %></:item>
   <:item title="项目描述"><%= @info.description %></:item>

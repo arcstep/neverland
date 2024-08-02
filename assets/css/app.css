@@ -1,5 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import "../../node_modules/github-markdown-css/github-markdown.css";
 
 /* This file is for your main application CSS */
