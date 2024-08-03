@@ -1,21 +1,100 @@
+<!-- lib/neverland_web/live/project_writing_live/edit.html.heex -->
 <.header>
   <%= @info.title %>
-  <:subtitle>AI长文写作</:subtitle>
+  <:subtitle>由 <%= @info.owner %> 更新于 <%= @info.updated_at %></:subtitle>
   <:actions>
-    <.link phx-click="list_resource" phx-value-info={@info.id}>
-      <.button>文件资源清单</.button>
+    <.link phx-click="list_resource" phx-value-action="list_resource">
+      <.button>资源</.button>
     </.link>
     <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>修改项目信息</.button>
+      <.button>配置</.button>
     </.link>
   </:actions>
 </.header>
+
+<hr />
+
+<.form
+  for={@input}
+  id="writing-form"
+  phx-change="submit_form"
+  phx-submit="submit_form"
+  class="tools-panel"
+>
+  <fieldset>
+    <legend>选择模式</legend>
+    <div class="tools-panel">
+      <div class="buttons flex flex-wrap gap-2">
+        <input
+          type="radio"
+          name="action"
+          id="action_idea"
+          value="idea"
+          checked={@input.action == "idea"}
+        />
+        <label for="action_idea" class="border rounded-lg p-2 bg-gray-200">
+          创意
+        </label>
+
+        <input
+          type="radio"
+          name="action"
+          id="action_outline"
+          value="outline"
+          checked={@input.action == "outline"}
+        />
+        <label for="action_outline" class="border rounded-lg p-2 bg-gray-200">
+          提纲
+        </label>
+
+        <input
+          type="radio"
+          name="action"
+          id="action_from_outline"
+          value="from_outline"
+          checked={@input.action == "from_outline"}
+        />
+        <label for="action_from_outline" class="border rounded-lg p-2 bg-gray-200">
+          扩写
+        </label>
+      </div>
+    </div>
+  </fieldset>
+  <div class="field">
+    <label for="task">任务描述</label>
+    <.input type="text" name="task" value={@input.task} placeholder="描述你的任务" />
+  </div>
+
+  <div class="field">
+    <label for="completed">已完成部分</label>
+    <.input
+      type="text"
+      name="completed"
+      value={@input.completed}
+      placeholder="已完成的部分"
+    />
+  </div>
+
+  <div class="field">
+    <label for="knowledge">知识背景</label>
+    <.input
+      type="text"
+      name="knowledge"
+      value={@input.knowledge}
+      placeholder="相关的知识背景"
+    />
+  </div>
+
+  <button type="submit" class="button is-primary">提交</button>
+</.form>
 
 <div class="markdown-body">
   <%= raw(@html_content) %>
 </div>
 
-<.list>
+<hr />
+
+<%!-- <.list>
   <:item title="项目ID"><%= @info.id %></:item>
   <:item title="项目描述"><%= @info.description %></:item>
   <:item title="项目公开"><%= @info.public %></:item>
@@ -23,22 +102,6 @@
   <:item title="更新于"><%= @info.updated_at %></:item>
   <:item title="拥有者"><%= @info.owner %></:item>
   <:item title="项目状态"><%= @info.state %></:item>
-</.list>
+</.list> --%>
 
 <.back navigate={~p"/projects"}>返回项目列表</.back>
-
-<%!-- <.modal
-  :if={@live_action == :edit}
-  id="info-modal"
-  show
-  on_cancel={JS.patch(~p"/projects/#{@info}")}
->
-  <.live_component
-    module={NeverlandWeb.ProjectInfoLive.FormComponent}
-    id={@info.id}
-    title={@page_title}
-    action={@live_action}
-    info={@info}
-    patch={~p"/projects/#{@info}"}
-  />
-</.modal> --%>

@@ -4,3 +4,10 @@
 @import "../../node_modules/github-markdown-css/github-markdown.css";
 
 /* This file is for your main application CSS */
+.tools-panel {
+    padding: 5px;
+}
+
+.tools-panel .buttons {
+    margin: 5px 0;
+}
