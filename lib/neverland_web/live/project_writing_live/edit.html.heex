@@ -2,6 +2,9 @@
   <%= @info.title %>
   <:subtitle>AI长文写作</:subtitle>
   <:actions>
+    <.link phx-click="list_resource" phx-value-info={@info.id}>
+      <.button>文件资源清单</.button>
+    </.link>
     <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
       <.button>修改项目信息</.button>
     </.link>

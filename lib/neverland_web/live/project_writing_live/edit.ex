@@ -26,6 +26,14 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   defp page_title(:edit), do: "🦋 AI写作"
 
   @impl true
+  def handle_event("list_resource", _value, socket) do
+    thread_id = socket.assigns.thread_id
+    Neverland.SandboxPython.input(:sandbox_python, "p.list_resource()", thread_id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:thread_id, _thread_id, :event, _event, :output, output}, socket) do
     IO.inspect("handling info...#{inspect(output)}")
 
