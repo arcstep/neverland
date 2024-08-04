@@ -23,10 +23,14 @@ defmodule Neverland.SandboxPython do
     GenServer.call(pid, :get_state)
   end
 
+  def is_thread_exist(pid, thread_id) do
+    GenServer.call(pid, {:is_thread_exist, thread_id})
+  end
+
   @doc """
   - script_name 表示所调用脚本，支持参数化
   - reply_to 代表一个调用者
-  - thread_id 代表一次调用，即调用者发起过多次平行调用
+  -  代表一次调用，即调用者发起过多次平行调用
   """
   def run(pid, script_name, reply_to \\ nil, thread_id \\ nil) do
     GenServer.call(pid, {:run_script, script_name, :reply_to, reply_to, :thread_id, thread_id})
@@ -63,8 +67,8 @@ defmodule Neverland.SandboxPython do
 
   def handle_call({:input, input, :thread_id, thread_id}, _from, %{batches: batches} = state) do
     case find_batch(batches, thread_id) do
-      {:error, _} ->
-        {:reply, {:error, "No matching batch found"}, state}
+      {:error, info} ->
+        {:reply, {:error, info}, state}
 
       {port, _} ->
         send(port, {self(), {:command, input <> "\n"}})
@@ -75,15 +79,17 @@ defmodule Neverland.SandboxPython do
   def handle_call(
         {:run_script, script_name, :reply_to, reply_to, :thread_id, thread_id},
         _from,
-        state
+        %{batches: batches} = state
       ) do
-    code_to_run = Sandbox.fetch_code_and_save([state.scripts_dir, script_name])
-
     port =
-      Port.open(
-        {:spawn, "python3 -u '#{code_to_run}'"},
-        [:binary, :exit_status]
-      )
+      case find_batch(batches, thread_id) do
+        {:error, _} ->
+          code_to_run = Sandbox.fetch_code_and_save([state.scripts_dir, script_name])
+          create_script(code_to_run)
+
+        {port, _} ->
+          port
+      end
 
     cur_thread_id =
       case thread_id do
@@ -92,7 +98,7 @@ defmodule Neverland.SandboxPython do
       end
 
     new_batches =
-      Map.put(state.batches, port, %{
+      Map.put(batches, port, %{
         reply_to: reply_to,
         thread_id: cur_thread_id,
         run_script: script_name
@@ -101,6 +107,13 @@ defmodule Neverland.SandboxPython do
     new_state = Map.put(state, :batches, new_batches)
 
     {:reply, {:ok, cur_thread_id}, new_state}
+  end
+
+  defp create_script(code_to_run) do
+    Port.open(
+      {:spawn, "python3 -u '#{code_to_run}'"},
+      [:binary, :exit_status]
+    )
   end
 
   def handle_info({port, {:data, data}}, %{batches: batches} = state) do
