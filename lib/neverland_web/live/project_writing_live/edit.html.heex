@@ -17,7 +17,7 @@
 <.form
   for={@input}
   id="writing-form"
-  phx-change="submit_form"
+  phx-change="change_form"
   phx-submit="submit_form"
   class="tools-panel"
 >
@@ -30,7 +30,7 @@
           name="action"
           id="action_idea"
           value="idea"
-          checked={@input.action == "idea"}
+          checked={@input["action"] == "idea"}
         />
         <label for="action_idea" class="border rounded-lg p-2 bg-gray-200">
           创意
@@ -41,7 +41,7 @@
           name="action"
           id="action_outline"
           value="outline"
-          checked={@input.action == "outline"}
+          checked={@input["action"] == "outline"}
         />
         <label for="action_outline" class="border rounded-lg p-2 bg-gray-200">
           提纲
@@ -52,7 +52,7 @@
           name="action"
           id="action_from_outline"
           value="from_outline"
-          checked={@input.action == "from_outline"}
+          checked={@input["action"] == "from_outline"}
         />
         <label for="action_from_outline" class="border rounded-lg p-2 bg-gray-200">
           扩写
@@ -62,7 +62,7 @@
   </fieldset>
   <div class="field">
     <label for="task">任务描述</label>
-    <.input type="text" name="task" value={@input.task} placeholder="描述你的任务" />
+    <.input type="text" name="task" value={@input["task"]} placeholder="描述你的任务" />
   </div>
 
   <div class="field">
@@ -70,7 +70,7 @@
     <.input
       type="text"
       name="completed"
-      value={@input.completed}
+      value={@input["completed"]}
       placeholder="已完成的部分"
     />
   </div>
@@ -80,12 +80,12 @@
     <.input
       type="text"
       name="knowledge"
-      value={@input.knowledge}
+      value={@input["knowledge"]}
       placeholder="相关的知识背景"
     />
   </div>
 
-  <button type="submit" class="button is-primary">提交</button>
+  <button type="submit" class="button border rounded-lg p-2">提交</button>
 </.form>
 
 <div class="markdown-body">

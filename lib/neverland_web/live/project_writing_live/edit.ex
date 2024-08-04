@@ -12,7 +12,8 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
     {:ok,
      socket
-     |> assign(:input, %{action: "idea", task: "", completed: "", knowledge: ""})
+     |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
+     |> assign(:raw_content, "")
      |> assign(:html_content, "")
      |> assign(:thread_id, thread_id)}
   end
@@ -36,31 +37,40 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, socket}
   end
 
+  def handle_event("change_form", _params, socket) do
+    # IO.puts("change_form: #{inspect(params)}")
+
+    {:noreply, socket}
+  end
+
   def handle_event("submit_form", params, socket) do
+    thread_id = socket.assigns.thread_id
+
     # 获取表单参数
-    # task = params["task"]
-    # completed = params["completed"]
-    # knowledge = params["knowledge"]
+    task = params["task"]
+    completed = params["completed"]
+    knowledge = params["knowledge"]
     action = params["action"]
 
     # 根据action执行不同的逻辑
-    case action do
-      "idea" ->
-        # 处理创意逻辑
-        IO.puts("idea: #{inspect(params)}")
+    cmd =
+      case action do
+        "idea" ->
+          "p.idea(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
 
-      "outline" ->
-        # 处理提纲逻辑
-        IO.puts("outline")
+        "outline" ->
+          "p.outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
 
-      "from_outline" ->
-        # 处理扩写逻辑
-        IO.puts("from_outline")
+        "from_outline" ->
+          "p.from_outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
 
-      _ ->
-        # 默认处理
-        IO.puts("default")
-    end
+        _ ->
+          # 默认处理
+          ""
+      end
+
+    Neverland.SandboxPython.input(:sandbox_python, cmd, thread_id)
+    # IO.puts("idea: #{completed}, #{knowledge}, #{task}, #{action}")
 
     # 返回更新后的socket
     {:noreply, socket}
@@ -70,9 +80,16 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   def handle_info({:thread_id, _thread_id, :event, _event, :output, output}, socket) do
     IO.inspect("handling info...#{inspect(output)}")
 
-    html_content = Earmark.as_html!(output)
+    new_raw_content = socket.assigns.raw_content <> output
 
-    {:noreply, assign(socket, :html_content, html_content)}
+    options = %Earmark.Options{gfm: true, breaks: true}
+    html_content = Earmark.as_html!(new_raw_content, options)
+    IO.inspect("handling info...#{inspect(html_content)}")
+
+    {:noreply,
+     socket
+     |> assign(:raw_content, new_raw_content)
+     |> assign(:html_content, html_content)}
   end
 
   @impl true
