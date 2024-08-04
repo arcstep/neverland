@@ -22,7 +22,7 @@
   class="tools-panel"
 >
   <fieldset>
-    <legend>选择模式</legend>
+    <legend>选择写作模式</legend>
     <div class="tools-panel">
       <div class="buttons flex flex-wrap gap-2">
         <input
@@ -61,22 +61,22 @@
     </div>
   </fieldset>
   <div class="field">
-    <label for="task">任务描述</label>
+    <label for="task">描述写作任务：</label>
     <.input type="text" name="task" value={@input["task"]} placeholder="描述你的任务" />
   </div>
 
   <div class="field">
-    <label for="completed">已完成部分</label>
+    <label for="completed">整理思路草稿：</label>
     <.input
       type="text"
       name="completed"
       value={@input["completed"]}
-      placeholder="已完成的部分"
+      placeholder="草稿或已完成部分"
     />
   </div>
 
   <div class="field">
-    <label for="knowledge">知识背景</label>
+    <label for="knowledge">需要注意的知识背景：</label>
     <.input
       type="text"
       name="knowledge"
@@ -85,8 +85,10 @@
     />
   </div>
 
-  <button type="submit" class="button border rounded-lg p-2">提交</button>
+  <button type="submit" class="button border rounded-lg p-2 button-group">提交</button>
 </.form>
+
+<hr />
 
 <div class="markdown-body">
   <%= raw(@html_content) %>

@@ -7,8 +7,10 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   def mount(_params, _session, socket) do
     IO.puts("LiveView mounted")
 
+    thread_id = "#{socket.assigns.current_user.email}"
+
     {:ok, thread_id} =
-      Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self())
+      Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
 
     {:ok,
      socket
@@ -86,21 +88,23 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     html_content = Earmark.as_html!(new_raw_content, options)
     IO.inspect("handling info...#{inspect(html_content)}")
 
-    {:noreply,
-     socket
-     |> assign(:raw_content, new_raw_content)
-     |> assign(:html_content, html_content)}
+    {
+      :noreply,
+      socket
+      |> assign(:raw_content, new_raw_content)
+      |> assign(:html_content, html_content)
+    }
   end
 
-  @impl true
-  def terminate(reason, socket) do
-    IO.puts("LiveView terminated: #{inspect(reason)}")
+  # @impl true
+  # def terminate(reason, socket) do
+  #   IO.puts("LiveView terminated: #{inspect(reason)}")
 
-    # 在 LiveView 终止时执行清理工作
-    # reason 参数可以是 :shutdown 或其他值，表示终止的原因
-    # 这里可以执行任何必要的清理，例如取消订阅、关闭数据库连接等
-    thread_id = socket.assigns.thread_id
-    Neverland.SandboxPython.input(:sandbox_python, "exit", thread_id)
-    :ok
-  end
+  #   # 在 LiveView 终止时执行清理工作
+  #   # reason 参数可以是 :shutdown 或其他值，表示终止的原因
+  #   # 这里可以执行任何必要的清理，例如取消订阅、关闭数据库连接等
+  #   thread_id = socket.assigns.thread_id
+  #   Neverland.SandboxPython.input(:sandbox_python, "exit", thread_id)
+  #   :ok
+  # end
 end
