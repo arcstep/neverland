@@ -12,20 +12,24 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:ok, thread_id} =
       Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
 
-    {:ok,
-     socket
-     |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
-     |> assign(:raw_content, "")
-     |> assign(:html_content, "")
-     |> assign(:thread_id, thread_id)}
+    {
+      :ok,
+      socket
+      |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
+      |> assign(:raw_content, "")
+      |> assign(:html_content, "")
+      |> assign(:thread_id, thread_id)
+    }
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply,
-     socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:info, Project.get_info!(id))}
+    {
+      :noreply,
+      socket
+      |> assign(:page_title, page_title(socket.assigns.live_action))
+      |> assign(:info, Project.get_info!(id))
+    }
   end
 
   defp page_title(:show), do: "🦋 项目文档查看"
