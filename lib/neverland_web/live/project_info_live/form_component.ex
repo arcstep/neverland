@@ -56,12 +56,14 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
     # IO.puts("new_info: #{inspect(new_info)}")
     changeset = Project.change_info(new_info)
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_new(:form, fn ->
-       to_form(changeset)
-     end)}
+    {
+      :ok,
+      socket
+      |> assign(assigns)
+      |> assign_new(:form, fn ->
+        to_form(changeset)
+      end)
+    }
   end
 
   @impl true
@@ -79,10 +81,12 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
       {:ok, info} ->
         notify_parent({:saved, info})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Info updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Info updated successfully")
+          |> push_patch(to: socket.assigns.patch)
+        }
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -100,10 +104,12 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
       {:ok, info} ->
         notify_parent({:saved, info})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Info created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Info created successfully")
+          |> push_patch(to: socket.assigns.patch)
+        }
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

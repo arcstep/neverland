@@ -10,10 +10,12 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
     # Project.list_infos(1, 10)
     infos = []
 
-    {:ok,
-     socket
-     |> assign(email: user.email, page: 1, per_page: 10, cur_page_length: length(infos))
-     |> stream(:infos, infos)}
+    {
+      :ok,
+      socket
+      |> assign(email: user.email, page: 1, per_page: 10, cur_page_length: length(infos))
+      |> stream(:infos, infos)
+    }
   end
 
   @impl true
@@ -24,11 +26,13 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
 
     # IO.puts("page: #{page}, per_page: #{per_page}")
 
-    {:noreply,
-     socket
-     |> assign(cur_page_length: length(infos), page: page, per_page: per_page)
-     |> apply_action(socket.assigns.live_action, params)
-     |> stream(:infos, infos)}
+    {
+      :noreply,
+      socket
+      |> assign(cur_page_length: length(infos), page: page, per_page: per_page)
+      |> apply_action(socket.assigns.live_action, params)
+      |> stream(:infos, infos)
+    }
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
