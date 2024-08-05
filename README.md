@@ -16,3 +16,25 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+# 网站配置
+
+## Nginx配置
+
+编辑配置文件 `sudo nano /etc/nginx/sites-available/default`：
+
+```
+server {
+  listen 80;
+  server_name localhost;
+  root /var/www/html;
+
+  index index.html index.htm;
+
+  location / {
+    try_files $uri$uri/ =404;
+  }
+}
+```
+
+启动 Nginx 服务 `sudo systemctl restart nginx`。
