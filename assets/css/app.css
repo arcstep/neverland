@@ -15,3 +15,50 @@
 .button-group {
     margin: 5px 0;
 }
+
+.max-w-2xl {
+    max-width: 100%;
+    margin: 0 50px 0 50px;
+}
+
+.container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 3fr;
+    grid-template-areas:
+        "header header"
+        "sidebar content";
+    height: 100vh;
+}
+
+.header {
+    grid-area: header;
+    background-color: #f8f9fa;
+    padding: 1rem;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: #e9ecef;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.content {
+    grid-area: content;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.tools-panel {
+    margin-bottom: 1rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.markdown-body {
+    margin-top: 1rem;
+}

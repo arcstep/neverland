@@ -9,6 +9,12 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
     thread_id = "#{socket.assigns.current_user.email}"
 
+    file_list = [
+      %{type: "file", name: "README1.md", path: "README1.md"},
+      %{type: "file", name: "README2.md", path: "README2.md"},
+      %{type: "file", name: "README3.md", path: "README3.md"}
+    ]
+
     {:ok, thread_id} =
       Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
 
@@ -19,6 +25,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:raw_content, "")
       |> assign(:html_content, "")
       |> assign(:thread_id, thread_id)
+      |> assign(:file_list, file_list)
     }
   end
 
