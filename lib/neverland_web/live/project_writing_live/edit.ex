@@ -18,12 +18,15 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:ok, thread_id} =
       Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
 
+    raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
+    html_content = convert_to_html(raw_content)
+
     {
       :ok,
       socket
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
-      |> assign(:raw_content, "")
-      |> assign(:html_content, "")
+      |> assign(:raw_content, raw_content)
+      |> assign(:html_content, html_content)
       |> assign(:thread_id, thread_id)
       |> assign(:file_list, file_list)
     }
@@ -34,13 +37,15 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
+      |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
       |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:info, Project.get_info!(id))
     }
   end
 
   defp page_title(:show), do: "🦋 项目文档查看"
-  defp page_title(:edit), do: "🦋 AI写作"
+  defp page_title(:gen), do: "🦋 AI写作"
+  defp page_title(:edit), do: "🦋 直接编辑"
 
   @impl true
   def handle_event("list_resource", _value, socket) do
@@ -95,8 +100,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
     new_raw_content = socket.assigns.raw_content <> output
 
-    options = %Earmark.Options{gfm: true, breaks: true}
-    html_content = Earmark.as_html!(new_raw_content, options)
+    html_content = convert_to_html(new_raw_content)
     IO.inspect("handling info...#{inspect(html_content)}")
 
     {
@@ -105,6 +109,11 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:raw_content, new_raw_content)
       |> assign(:html_content, html_content)
     }
+  end
+
+  defp convert_to_html(raw_content) do
+    options = %Earmark.Options{gfm: true, breaks: true}
+    Earmark.as_html!(raw_content, options)
   end
 
   # @impl true

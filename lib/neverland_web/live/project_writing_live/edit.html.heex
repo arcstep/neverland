@@ -4,6 +4,9 @@
     <%= @info.title %>
     <:subtitle>由 <%= @info.owner %> 更新于 <%= @info.updated_at %></:subtitle>
     <:actions>
+      <.link patch={~p"/projects/#{@info}/writing/gen"} phx-click={JS.push_focus()}>
+        <.button>AI写作</.button>
+      </.link>
       <.link phx-click="list_resource" phx-value-action="list_resource">
         <.button>资源</.button>
       </.link>
@@ -16,7 +19,7 @@
   <hr />
 
   <aside class="sidebar">
-    <h3>文件资源列表</h3>
+    <h3>资源列表</h3>
     <ul>
       <%= for file <- @file_list do %>
         <li>
@@ -31,86 +34,9 @@
   </aside>
 
   <main class="content">
-    <div class="tools-panel">
-      <.form
-        for={@input}
-        id="writing-form"
-        phx-change="change_form"
-        phx-submit="submit_form"
-        class="tools-panel"
-      >
-        <fieldset>
-          <legend>选择写作模式</legend>
-          <div class="tools-panel">
-            <div class="buttons flex flex-wrap gap-2">
-              <input
-                type="radio"
-                name="action"
-                id="action_idea"
-                value="idea"
-                checked={@input["action"] == "idea"}
-              />
-              <label for="action_idea" class="border rounded-lg p-2 bg-gray-200">
-                创意
-              </label>
-
-              <input
-                type="radio"
-                name="action"
-                id="action_outline"
-                value="outline"
-                checked={@input["action"] == "outline"}
-              />
-              <label for="action_outline" class="border rounded-lg p-2 bg-gray-200">
-                提纲
-              </label>
-
-              <input
-                type="radio"
-                name="action"
-                id="action_from_outline"
-                value="from_outline"
-                checked={@input["action"] == "from_outline"}
-              />
-              <label for="action_from_outline" class="border rounded-lg p-2 bg-gray-200">
-                扩写
-              </label>
-            </div>
-          </div>
-        </fieldset>
-        <div class="field">
-          <label for="task">描述写作任务：</label>
-          <.input type="text" name="task" value={@input["task"]} placeholder="描述你的任务" />
-        </div>
-
-        <div class="field">
-          <label for="completed">整理思路草稿：</label>
-          <.input
-            type="text"
-            name="completed"
-            value={@input["completed"]}
-            placeholder="草稿或已完成部分"
-          />
-        </div>
-
-        <div class="field">
-          <label for="knowledge">需要注意的知识背景：</label>
-          <.input
-            type="text"
-            name="knowledge"
-            value={@input["knowledge"]}
-            placeholder="相关的知识背景"
-          />
-        </div>
-
-        <button type="submit" class="button border rounded-lg p-2 button-group">提交</button>
-      </.form>
-
-      <hr />
-
-      <div class="markdown-body">
-        <%= raw(@html_content) %>
-      </div>
+    <h2><%= @page_title %></h2>
+    <div class="markdown-body">
+      <%= raw(@html_content) %>
     </div>
   </main>
 </div>
@@ -126,5 +52,21 @@
   <:item title="拥有者"><%= @info.owner %></:item>
   <:item title="项目状态"><%= @info.state %></:item>
 </.list> --%>
+
+<.modal
+  :if={@live_action == :gen}
+  id="project-ai-gen-modal"
+  show
+  on_cancel={JS.patch(~p"/projects/#{@info}/writing")}
+>
+  <.live_component
+    module={NeverlandWeb.Project.WritingLive.FormComponent}
+    id={@info.id}
+    title={@page_title}
+    action={@live_action}
+    input={@input}
+    patch={~p"/projects/#{@info}/writing"}
+  />
+</.modal>
 
 <.back navigate={~p"/projects"}>返回项目列表</.back>

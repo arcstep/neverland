@@ -21,6 +21,11 @@
     margin: 0 50px 0 50px;
 }
 
+.py-20 {
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+}
+
 .container {
     display: grid;
     grid-template-rows: auto 1fr;
