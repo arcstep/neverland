@@ -84,4 +84,4 @@ config :phoenix_live_view,
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
-config :neverland, :textlong_root, "priv/data/projects"
+config :neverland, Neverland.Sandbox.Resource, textlong_root: "priv/data/projects"
