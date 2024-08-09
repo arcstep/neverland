@@ -1,7 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import "../../node_modules/github-markdown-css/github-markdown.css";
+@import "../../node_modules/github-markdown-css/github-markdown-light.css";
 
 /* This file is for your main application CSS */
 .tools-panel {

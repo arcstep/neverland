@@ -1,7 +1,7 @@
 defmodule NeverlandWeb.Project.WritingLive.FormComponent do
   use NeverlandWeb, :live_component
 
-  alias Neverland.Project
+  # alias Neverland.Project 
 
   @impl true
   def render(assigns) do
@@ -139,5 +139,5 @@ defmodule NeverlandWeb.Project.WritingLive.FormComponent do
     {:noreply, socket}
   end
 
-  defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+  # defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

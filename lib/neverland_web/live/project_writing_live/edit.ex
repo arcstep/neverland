@@ -2,24 +2,19 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   use NeverlandWeb, :live_view
 
   alias Neverland.Project
+  alias Neverland.Project.Resource
+  alias Neverland.Sandbox.Python
 
   @impl true
   def mount(_params, _session, socket) do
-    IO.puts("LiveView mounted")
-
-    thread_id = "#{socket.assigns.current_user.email}"
-
-    file_list = [
-      %{type: "file", name: "README1.md", path: "README1.md"},
-      %{type: "file", name: "README2.md", path: "README2.md"},
-      %{type: "file", name: "README3.md", path: "README3.md"}
-    ]
-
-    {:ok, thread_id} =
-      Neverland.SandboxPython.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
+    IO.puts("\n[ mout ]: #{inspect(socket)}")
 
     raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
     html_content = convert_to_html(raw_content)
+    thread_id = "#{socket.assigns.current_user.email}"
+
+    {:ok, thread_id} =
+      Python.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
 
     {
       :ok,
@@ -28,18 +23,24 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:raw_content, raw_content)
       |> assign(:html_content, html_content)
       |> assign(:thread_id, thread_id)
-      |> assign(:file_list, file_list)
     }
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    IO.puts("\n[ handle_params ]: #{inspect(socket)}")
+    project_info = Project.get_info!(id)
+    IO.puts("\n[ project_info ]: #{inspect(project_info.title)}")
+    file_list = Resource.file_list(project_info.title)
+
     {
       :noreply,
       socket
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
       |> assign(:page_title, page_title(socket.assigns.live_action))
+      |> assign(:project_id, id)
       |> assign(:info, Project.get_info!(id))
+      |> assign(:file_list, file_list)
     }
   end
 
@@ -50,7 +51,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   @impl true
   def handle_event("list_resource", _value, socket) do
     thread_id = socket.assigns.thread_id
-    Neverland.SandboxPython.input(:sandbox_python, "p.list_resource()", thread_id)
+    Python.input(:sandbox_python, "p.list_resource()", thread_id)
 
     {:noreply, socket}
   end
@@ -87,7 +88,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
           ""
       end
 
-    Neverland.SandboxPython.input(:sandbox_python, cmd, thread_id)
+    Python.input(:sandbox_python, cmd, thread_id)
     # IO.puts("idea: #{completed}, #{knowledge}, #{task}, #{action}")
 
     # 返回更新后的socket
@@ -124,7 +125,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   #   # reason 参数可以是 :shutdown 或其他值，表示终止的原因
   #   # 这里可以执行任何必要的清理，例如取消订阅、关闭数据库连接等
   #   thread_id = socket.assigns.thread_id
-  #   Neverland.SandboxPython.input(:sandbox_python, "exit", thread_id)
+  #   Python.input(:sandbox_python, "exit", thread_id)
   #   :ok
   # end
 end

@@ -4,9 +4,6 @@
     <%= @info.title %>
     <:subtitle>由 <%= @info.owner %> 更新于 <%= @info.updated_at %></:subtitle>
     <:actions>
-      <.link patch={~p"/projects/#{@info}/writing/gen"} phx-click={JS.push_focus()}>
-        <.button>AI写作</.button>
-      </.link>
       <.link phx-click="list_resource" phx-value-action="list_resource">
         <.button>资源</.button>
       </.link>
@@ -20,17 +17,26 @@
 
   <aside class="sidebar">
     <h3>资源列表</h3>
-    <ul>
-      <%= for file <- @file_list do %>
-        <li>
-          <%= if file.type == :directory do %>
-            📁 <%= file.name %>
-          <% else %>
-            📄 <%= file.name %>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
+    <%= for file <- @file_list do %>
+      <li>
+        <span class="icon" style="color: #009688;">
+          <%= raw(
+            case file.extension do
+              "txt" -> "<i class=\"fas fa-solid fa-file-alt\"></i>"
+              "md" -> "<i class=\"fas fa-file-code\"></i>"
+              "mermaid" -> "<i class=\"fas fa-project-diagram\"></i>"
+              "python" -> "<i class=\"fas fa-python\"></i>"
+              "yaml" -> "<i class=\"fas fa-file-yaml\"></i>"
+              "json" -> "<i class=\"fas fa-file-code\"></i>"
+              "png" -> "<i class=\"fas fa-file-image\"></i>"
+              "jpeg" -> "<i class=\"fas fa-file-image\"></i>"
+              _ -> "<i class=\"fas fa-file\"></i>"
+            end
+          ) %>
+        </span>
+        <%= file.name %>
+      </li>
+    <% end %>
   </aside>
 
   <main class="content">
