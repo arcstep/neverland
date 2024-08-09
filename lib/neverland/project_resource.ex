@@ -5,20 +5,37 @@ defmodule Neverland.Project.Resource do
   # 获取项目文件列表
   def file_list(project_id \\ "") do
     project_path = project_path(project_id)
-    {:ok, files} = File.ls(project_path)
 
-    files
-    |> Enum.filter(&filter_files/1)
-    |> Enum.map(fn file ->
-      full_path = Path.join(project_path, file)
+    with {:ok, files} <- File.ls(project_path) do
+      files
+      |> Enum.filter(&filter_files/1)
+      |> Enum.map(&file_info(project_path, &1))
+    else
+      {:error, :enoent} -> []
+      {:error, reason} -> raise "Error listing files: #{inspect(reason)}"
+    end
+  end
+
+  defp file_info(project_path, file_name) do
+    full_path = Path.join(project_path, file_name)
+
+    with {:ok, %File.Stat{size: size, mtime: mtime}} <- File.stat(full_path) do
+      type = if File.dir?(full_path), do: :dir, else: :file
+      extension = Path.extname(file_name) |> String.replace_leading(".", "")
 
       %{
-        type: if(File.dir?(full_path), do: "dir", else: "file"),
-        name: file,
+        type: type,
+        name: file_name,
         path: full_path,
-        id: UUID.uuid5(:dns, full_path)
+        id: UUID.uuid5(:dns, full_path),
+        size: size,
+        mtime: mtime,
+        extension: extension
       }
-    end)
+    else
+      {:error, reason} ->
+        raise "Error retrieving file info for #{file_name}: #{inspect(reason)}"
+    end
   end
 
   defp filter_files(file_name) do
