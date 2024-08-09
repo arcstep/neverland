@@ -19,4 +19,4 @@ config :logger, level: :info
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
 
-config :neverland, Neverland.Sandbox.Resource, textlong_root: "priv/data/projects"
+config :neverland, Neverland.Project.Resource, textlong_root: "priv/data/projects"
