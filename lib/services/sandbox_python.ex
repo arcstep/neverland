@@ -1,6 +1,6 @@
-defmodule Neverland.SandboxPython do
+defmodule Neverland.Sandbox.Python do
   use GenServer
-  alias Neverland.Sandbox
+  alias Neverland.Sandbox.Utils
 
   def start_link(opts \\ []) do
     name = opts |> Keyword.get(:name, __MODULE__)
@@ -40,27 +40,6 @@ defmodule Neverland.SandboxPython do
     GenServer.call(pid, {:input, input, :thread_id, thread_id})
   end
 
-  def exit_all_scripts(pid) do
-    IO.puts("closing all Python ports...")
-
-    state = get_state(pid)
-
-    state.batches
-    |> Enum.each(fn {port, %{thread_id: thread_id}} ->
-      IO.puts("closing port: #{inspect(port)}, thread_id: #{inspect(thread_id)}")
-      send(port, {pid, {:command, "exit\n"}})
-      Process.sleep(100)
-      send(port, {self(), :close})
-    end)
-  end
-
-  def find_batch(batches, thread_id) do
-    case Enum.filter(batches, fn {_port, details} -> details.thread_id == thread_id end) do
-      [head | _] -> head
-      [] -> {:error, "No matching batch found"}
-    end
-  end
-
   def handle_call(:get_state, _from, state) do
     {:reply, state, state}
   end
@@ -84,7 +63,7 @@ defmodule Neverland.SandboxPython do
     port =
       case find_batch(batches, thread_id) do
         {:error, _} ->
-          code_to_run = Sandbox.fetch_code_and_save([state.scripts_dir, script_name])
+          code_to_run = fetch_code_and_save([state.scripts_dir, script_name])
           create_script(code_to_run)
 
         {port, _} ->
@@ -109,29 +88,22 @@ defmodule Neverland.SandboxPython do
     {:reply, {:ok, cur_thread_id}, new_state}
   end
 
-  defp create_script(code_to_run) do
-    Port.open(
-      {:spawn, "python3 -u '#{code_to_run}'"},
-      [:binary, :exit_status]
-    )
-  end
-
   def handle_info({port, {:data, data}}, %{batches: batches} = state) do
     case Map.get(batches, port) do
       nil ->
         {:noreply, state}
 
       %{reply_to: reply_to, thread_id: thread_id} ->
-        {event, processed_data} = Sandbox.process_data(data)
+        {event, processed_data} = Utils.process_data(data)
 
-        Sandbox.process_event(event, processed_data, thread_id, reply_to)
+        Utils.process_event(event, processed_data, thread_id, reply_to)
 
         {:noreply, state}
     end
   end
 
   def handle_info({port, {:exit_status, status}}, %{batches: batches} = state) do
-    IO.puts("\nPython script exited with status: #{status} | " <> inspect(port))
+    IO.puts("\nScript exited with status: #{status} | " <> inspect(port))
     new_batches = Map.delete(batches, port)
     new_state = Map.put(state, :batches, new_batches)
 
@@ -143,5 +115,51 @@ defmodule Neverland.SandboxPython do
     IO.puts("Process #{inspect(self())} is being terminated because: #{inspect(reason)}")
     exit_all_scripts(self())
     :ok
+  end
+
+  defp create_script(code_to_run) do
+    Port.open(
+      {:spawn, "python3 -u '#{code_to_run}'"},
+      [:binary, :exit_status]
+    )
+  end
+
+  defp fetch_code_and_save(paths_parts) do
+    path = Enum.join(paths_parts, "/")
+
+    script_content = File.read!(path)
+    repl_code = File.read!("priv/scripts/__repl__.py")
+    full_code = "#{script_content}\n\n#{repl_code}"
+
+    string_without_py =
+      case String.ends_with?(path, ".py") do
+        true -> String.trim_trailing(path, ".py")
+        false -> path
+      end
+
+    new_file_path = "#{string_without_py}__repl__.py"
+    File.write!(new_file_path, full_code)
+    new_file_path
+  end
+
+  defp exit_all_scripts(pid) do
+    IO.puts("closing all Python ports...")
+
+    state = get_state(pid)
+
+    state.batches
+    |> Enum.each(fn {port, %{thread_id: thread_id}} ->
+      IO.puts("closing port: #{inspect(port)}, thread_id: #{inspect(thread_id)}")
+      send(port, {pid, {:command, "exit\n"}})
+      Process.sleep(100)
+      send(port, {self(), :close})
+    end)
+  end
+
+  defp find_batch(batches, thread_id) do
+    case Enum.filter(batches, fn {_port, details} -> details.thread_id == thread_id end) do
+      [head | _] -> head
+      [] -> {:error, "No matching batch found"}
+    end
   end
 end
