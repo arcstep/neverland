@@ -56,6 +56,18 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("open_file", %{"path" => file_path}, socket) do
+    {:ok, raw_content} = File.read(file_path)
+    IO.puts("open_file: #{inspect(raw_content)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(:raw_content, raw_content)
+    }
+  end
+
   def handle_event("change_form", _params, socket) do
     # IO.puts("change_form: #{inspect(params)}")
 

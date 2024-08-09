@@ -18,18 +18,37 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
+import { Socket } from "phoenix"
+import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import { basicSetup, EditorView } from "../../node_modules/codemirror"
+import { markdown } from "../../node_modules/@codemirror/lang-markdown"
+import { languages } from "../../node_modules/@codemirror/language-data"
+
+function initializeCodeMirror(textareaId) {
+  const textarea = document.getElementById(textareaId);
+  if (textarea) {
+    return new EditorView({
+      doc: "Hello\n\n```javascript\nlet x = 'y'\n```",
+      extensions: [
+        basicSetup,
+        markdown({ codeLanguages: languages })
+      ],
+      parent: document.body
+    })
+  }
+}
+
+window.initializeCodeMirror = initializeCodeMirror;
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: { _csrf_token: csrfToken }
 })
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
