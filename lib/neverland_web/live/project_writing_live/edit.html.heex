@@ -2,7 +2,10 @@
 <div class="container">
   <.header class="header">
     <%= @info.title %>
-    <:subtitle>由 <%= @info.owner %> 更新于 <%= @info.updated_at %></:subtitle>
+    <:subtitle>
+      由 <%= @info.owner %> 更新于
+      <span><%= Timex.format!(@info.updated_at, "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}") %></span>
+    </:subtitle>
     <:actions>
       <.link phx-click="list_resource" phx-value-action="list_resource">
         <.button>资源</.button>
@@ -34,7 +37,7 @@
             end
           ) %>
         </span>
-        <.link phx-click="open_file" phx-value-path={file.path}>
+        <.link phx-click="open_file" phx-value-path={file.path} phx-value-name={file.name}>
           <%= file.name %>
         </.link>
       </div>

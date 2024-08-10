@@ -14,7 +14,12 @@
 >
   <:col :let={{_id, info}} label="项目ID"><%= info.id %></:col>
   <:col :let={{_id, info}} label="标题"><%= info.title %></:col>
-  <:col :let={{_id, info}} label="更新于"><%= info.updated_at %></:col>
+  <:col :let={{_id, info}} label="更新于">
+    <%= Timex.format!(
+      Timex.Timezone.convert(info.updated_at, "Asia/Shanghai"),
+      "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}"
+    ) %>
+  </:col>
   <:col :let={{_id, info}} label="项目状态"><%= info.state %></:col>
   <:action :let={{_id, info}}>
     <div class="sr-only">

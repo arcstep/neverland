@@ -7,7 +7,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   @impl true
   def mount(_params, _session, socket) do
-    IO.puts("\n[ mout ]: #{inspect(socket)}")
+    IO.puts("\n[ mount ]: #{inspect(socket)}")
 
     raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
     html_content = convert_to_html(raw_content)
@@ -44,9 +44,10 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
-  defp page_title(:show, file_name \\ ""), do: "🦋 项目文档查看" <> " [#{file_name}]"
-  defp page_title(:gen, file_name), do: "🦋 AI写作" <> " [#{file_name}]"
-  defp page_title(:edit, file_name), do: "🦋 直接编辑" <> " [#{file_name}]"
+  defp page_title(action, file_name \\ "")
+  defp page_title(:show, file_name), do: "🦋 项目文档查看" <> file_name
+  defp page_title(:gen, file_name), do: "🦋 AI写作" <> file_name
+  defp page_title(:edit, file_name), do: "🦋 直接编辑" <> file_name
 
   @impl true
   def handle_event("list_resource", _value, socket) do
@@ -56,15 +57,14 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("open_file", %{"path" => file_path}, socket) do
+  def handle_event("open_file", %{"path" => file_path, "name" => name}, socket) do
     {:ok, raw_content} = File.read(file_path)
     IO.puts("open_file: #{inspect(raw_content)}")
 
     {
       :noreply,
       socket
-      |> assign(:page_title, page_title(socket.assigns.live_action, file_path))
+      |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{name} ]"))
       |> assign(:raw_content, raw_content)
     }
   end

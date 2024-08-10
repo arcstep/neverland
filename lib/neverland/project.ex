@@ -19,7 +19,7 @@ defmodule Neverland.Project do
   """
   def list_infos(page, per_page) do
     Info
-    |> order_by([i], asc: i.inserted_at)
+    |> order_by([i], desc: i.inserted_at)
     |> limit(^per_page)
     |> offset(^((page - 1) * per_page))
     |> Repo.all()
