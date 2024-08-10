@@ -21,25 +21,6 @@ import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-import { basicSetup, EditorView } from "../../node_modules/codemirror"
-import { markdown } from "../../node_modules/@codemirror/lang-markdown"
-import { languages } from "../../node_modules/@codemirror/language-data"
-
-function initializeCodeMirror(textareaId) {
-  const textarea = document.getElementById(textareaId);
-  if (textarea) {
-    return new EditorView({
-      doc: "Hello\n\n```javascript\nlet x = 'y'\n```",
-      extensions: [
-        basicSetup,
-        markdown({ codeLanguages: languages })
-      ],
-      parent: document.body
-    })
-  }
-}
-
-window.initializeCodeMirror = initializeCodeMirror;
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {

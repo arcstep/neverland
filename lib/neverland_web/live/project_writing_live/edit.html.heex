@@ -47,13 +47,6 @@
       <textarea id="markdown-editor" name="content" style="width: 100%; height: 80vh"><%= @raw_content %></textarea>
     </div>
 
-    <script>
-      window.addEventListener('DOMContentLoaded', function () {
-        window.initializeCodeMirror('markdown-editor');
-        console.log("Initialized CodeMirror")
-      });
-    </script>
-
     <%!-- <div class="markdown-body">
       <%= raw(@html_content) %>
     </div> --%>

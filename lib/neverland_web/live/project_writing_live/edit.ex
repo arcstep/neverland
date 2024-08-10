@@ -44,9 +44,9 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
-  defp page_title(:show), do: "🦋 项目文档查看"
-  defp page_title(:gen), do: "🦋 AI写作"
-  defp page_title(:edit), do: "🦋 直接编辑"
+  defp page_title(:show, file_name \\ ""), do: "🦋 项目文档查看" <> " [#{file_name}]"
+  defp page_title(:gen, file_name), do: "🦋 AI写作" <> " [#{file_name}]"
+  defp page_title(:edit, file_name), do: "🦋 直接编辑" <> " [#{file_name}]"
 
   @impl true
   def handle_event("list_resource", _value, socket) do
@@ -64,6 +64,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
+      |> assign(:page_title, page_title(socket.assigns.live_action, file_path))
       |> assign(:raw_content, raw_content)
     }
   end
