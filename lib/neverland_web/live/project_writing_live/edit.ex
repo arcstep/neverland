@@ -20,6 +20,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :ok,
       socket
       |> assign(:file_path, "")
+      |> assign(:file_name, "")
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
       |> assign(:form, %{"raw_content" => raw_content})
       # |> assign(:raw_content, raw_content)
@@ -59,7 +60,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, socket}
   end
 
-  def handle_event("open_file", %{"path" => file_path, "name" => name}, socket) do
+  def handle_event("open_file", %{"path" => file_path, "name" => file_name}, socket) do
     {:ok, raw_content} = File.read(file_path)
     IO.puts("open_file: #{inspect(raw_content)}")
 
@@ -67,9 +68,27 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :noreply,
       socket
       |> assign(:file_path, file_path)
-      |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{name} ]"))
+      |> assign(:file_name, file_name)
+      |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{file_name} ]"))
       |> assign(:form, %{"raw_content" => raw_content})
     }
+  end
+
+  def handle_event("new_item", _params, socket) do
+    # 处理新建事件的逻辑
+    {:noreply, socket}
+  end
+
+  def handle_event("rename_item", params, socket) do
+    # 处理重命名事件的逻辑
+    IO.puts("rename_item: #{inspect(params)}")
+    {:noreply, socket}
+  end
+
+  def handle_event("remove_item", params, socket) do
+    # 处理移除事件的逻辑
+    IO.puts("remove_item: #{inspect(params)}")
+    {:noreply, socket}
   end
 
   def handle_event("change_form", _params, socket) do
@@ -113,12 +132,12 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   @impl true
   def handle_info({:thread_id, _thread_id, :event, _event, :output, output}, socket) do
-    IO.inspect("handling info...#{inspect(output)}")
+    IO.puts("handling info...#{inspect(output)}")
 
     new_raw_content = socket.assigns.raw_content <> output
 
     html_content = convert_to_html(new_raw_content)
-    IO.inspect("handling info...#{inspect(html_content)}")
+    IO.puts("handling info...#{inspect(html_content)}")
 
     {
       :noreply,
