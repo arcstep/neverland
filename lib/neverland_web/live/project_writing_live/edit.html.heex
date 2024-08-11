@@ -2,24 +2,34 @@
 <div class="container">
   <.header class="header">
     <%= @info.title %>
-    <:subtitle>
-      由 <%= @info.owner %> 更新于
-      <span><%= Timex.format!(@info.updated_at, "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}") %></span>
-    </:subtitle>
-    <:actions>
-      <.link phx-click="list_resource" phx-value-action="list_resource">
-        <.button>资源</.button>
-      </.link>
-      <.link patch={~p"/projects/#{@info}/show/edit"} phx-click={JS.push_focus()}>
-        <.button>配置</.button>
-      </.link>
-    </:actions>
+    <span style="color: gray; font-size: small;">
+      由 <%= @info.owner %> 更新于 <%= Timex.format!(
+        @info.updated_at,
+        "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}"
+      ) %>
+    </span>
   </.header>
 
   <hr />
 
   <aside class="sidebar">
-    <h3>资源列表</h3>
+    <h3 style="display: flex; align-items: center; justify-content: space-between;">
+      <span>资源列表</span>
+      <span>
+        <button
+          style="background: none; border: none; cursor: pointer; margin: 0 5px"
+          title="新建"
+        >
+          <i class="fas fa-plus"></i>
+        </button>
+        <button
+          style="background: none; border: none; cursor: pointer; margin: 0 5px"
+          title="重命名"
+        >
+          <i class="fas fa-edit"></i>
+        </button>
+      </span>
+    </h3>
     <%= for file <- @file_list do %>
       <div>
         <span class="icon" style="color: #009688;">
@@ -45,7 +55,9 @@
   </aside>
 
   <main class="content">
-    <h2><%= @page_title %></h2>
+    <h2 style="display: flex; align-items: center; justify-content: space-between;">
+      <span><%= @page_title %></span>
+    </h2>
 
     <.live_component
       id={"project-#{@project_id}-editor"}

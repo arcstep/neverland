@@ -17,7 +17,7 @@ defmodule NeverlandWeb.Project.WritingLive.FormComponent.Edit do
         <textarea
           id="markdown-editor"
           name="content"
-          style="width: 100%; height: calc(100vh - 290px - 280px)"
+          style="width: 100%; height: calc(100vh - 290px - 250px)"
         ><%= @form["raw_content"] %></textarea>
         <:actions>
           <.button phx-disable-with="保存...">保存</.button>
