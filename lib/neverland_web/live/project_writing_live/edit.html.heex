@@ -28,11 +28,20 @@
         >
           <i class="fas fa-edit"></i>
         </button>
+        <button
+          style="background: none; border: none; cursor: pointer; margin: 0 5px"
+          title="移除"
+        >
+          <i class="fas fa-remove"></i>
+        </button>
       </span>
     </h3>
     <%= for file <- @file_list do %>
       <div>
-        <span class="icon" style="color: #009688;">
+        <span
+          class="icon"
+          style={if file.path == @file_path, do: "color: #009688;", else: "color: #888888;"}
+        >
           <%= raw(
             case file.extension do
               "txt" -> "<i class=\"fas fa-solid fa-file-alt\"></i>"
@@ -47,7 +56,12 @@
             end
           ) %>
         </span>
-        <.link phx-click="open_file" phx-value-path={file.path} phx-value-name={file.name}>
+        <.link
+          phx-click="open_file"
+          phx-value-path={file.path}
+          phx-value-name={file.name}
+          style={if file.path == @file_path, do: "text-decoration: underline;", else: ""}
+        >
           <%= file.name %>
         </.link>
       </div>
@@ -55,13 +69,10 @@
   </aside>
 
   <main class="content">
-    <h2 style="display: flex; align-items: center; justify-content: space-between;">
-      <span><%= @page_title %></span>
-    </h2>
-
     <.live_component
       id={"project-#{@project_id}-editor"}
       module={NeverlandWeb.Project.WritingLive.FormComponent.Edit}
+      page_title={@page_title}
       form={@form}
     />
 

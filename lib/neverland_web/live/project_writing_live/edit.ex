@@ -19,6 +19,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :ok,
       socket
+      |> assign(:file_path, "")
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
       |> assign(:form, %{"raw_content" => raw_content})
       # |> assign(:raw_content, raw_content)
@@ -65,6 +66,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
+      |> assign(:file_path, file_path)
       |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{name} ]"))
       |> assign(:form, %{"raw_content" => raw_content})
     }

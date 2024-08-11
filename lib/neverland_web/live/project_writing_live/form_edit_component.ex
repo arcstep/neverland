@@ -7,6 +7,9 @@ defmodule NeverlandWeb.Project.WritingLive.FormComponent.Edit do
   def render(assigns) do
     ~H"""
     <div>
+      <h2 style="display: flex; align-items: center; justify-content: space-between;">
+        <span><%= @page_title %></span>
+      </h2>
       <.simple_form
         for={@form}
         id="writing-form"
