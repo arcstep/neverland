@@ -19,6 +19,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :ok,
       socket
+      |> assign(:edit_mode, "human")
       |> assign(:file_path, "")
       |> assign(:file_name, "")
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
@@ -72,6 +73,11 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{file_name} ]"))
       |> assign(:form, %{"raw_content" => raw_content})
     }
+  end
+
+  def handle_event("set_edit_mode", %{"value" => mode}, socket) do
+    # 处理编辑模式切换的逻辑
+    {:noreply, assign(socket, :edit_mode, mode)}
   end
 
   def handle_event("new_item", _params, socket) do

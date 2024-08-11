@@ -25,14 +25,14 @@
     <div class="sr-only">
       <.link navigate={~p"/projects/#{info}/writing"}>写作</.link>
     </div>
-    <.link patch={~p"/projects/#{info}/edit"}>编辑</.link>
+    <.link patch={~p"/projects/#{info}/edit"}>配置</.link>
   </:action>
   <:action :let={{id, info}}>
     <.link
       phx-click={JS.push("delete", value: %{id: info.id}) |> hide("##{id}")}
       data-confirm="Are you sure?"
     >
-      删除
+      移除
     </.link>
   </:action>
 </.table>
