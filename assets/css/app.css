@@ -33,7 +33,7 @@
     grid-template-areas:
         "header header"
         "sidebar content";
-    height: 100vh;
+    height: calc(100vh - 290px);
 }
 
 .header {

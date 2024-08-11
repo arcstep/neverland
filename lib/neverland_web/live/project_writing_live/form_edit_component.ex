@@ -14,7 +14,11 @@ defmodule NeverlandWeb.Project.WritingLive.FormComponent.Edit do
         phx-change="validate"
         phx-submit="save"
       >
-        <textarea id="markdown-editor" name="content" style="width: 100%; height: 60vh"><%= @form["raw_content"] %></textarea>
+        <textarea
+          id="markdown-editor"
+          name="content"
+          style="width: 100%; height: calc(100vh - 290px - 280px)"
+        ><%= @form["raw_content"] %></textarea>
         <:actions>
           <.button phx-disable-with="保存...">保存</.button>
         </:actions>
