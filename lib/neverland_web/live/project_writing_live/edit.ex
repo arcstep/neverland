@@ -20,7 +20,8 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :ok,
       socket
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
-      |> assign(:raw_content, raw_content)
+      |> assign(:form, %{"raw_content" => raw_content})
+      # |> assign(:raw_content, raw_content)
       |> assign(:html_content, html_content)
       |> assign(:thread_id, thread_id)
     }
@@ -65,7 +66,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :noreply,
       socket
       |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{name} ]"))
-      |> assign(:raw_content, raw_content)
+      |> assign(:form, %{"raw_content" => raw_content})
     }
   end
 
