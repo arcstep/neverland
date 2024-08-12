@@ -80,6 +80,12 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, assign(socket, :edit_mode, mode)}
   end
 
+  def handle_event("set_command_mode", %{"value" => mode}, socket) do
+    # 处理编辑模式切换的逻辑
+    IO.puts("set_command_mode: #{inspect(mode)}")
+    {:noreply, assign(socket, :edit_mode, mode)}
+  end
+
   def handle_event("new_item", _params, socket) do
     # 处理新建事件的逻辑
     {:noreply, socket}

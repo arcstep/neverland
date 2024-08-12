@@ -19,16 +19,34 @@
             value="human"
             phx-click="set_edit_mode"
             checked={if @edit_mode == "human", do: true, else: false}
-          /> 手工编辑
+          /> 编辑
         </label>
-        <label>
+        <label style="margin-right: 10px;">
           <input
             type="radio"
             name="edit_mode"
-            value="ai"
-            phx-click="set_edit_mode"
-            checked={if @edit_mode == "ai", do: true, else: false}
-          /> AI生成
+            value="idea"
+            phx-click="set_command_mode"
+            checked={if @edit_mode == "idea", do: true, else: false}
+          /> 创意
+        </label>
+        <label style="margin-right: 10px;">
+          <input
+            type="radio"
+            name="edit_mode"
+            value="outline"
+            phx-click="set_command_mode"
+            checked={if @edit_mode == "outline", do: true, else: false}
+          /> 提纲
+        </label>
+        <label style="margin-right: 10px;">
+          <input
+            type="radio"
+            name="edit_mode"
+            value="from_outline"
+            phx-click="set_command_mode"
+            checked={if @edit_mode == "from_outline", do: true, else: false}
+          /> 扩写
         </label>
       </div>
     </div>
@@ -103,6 +121,15 @@
         id={"project-#{@project_id}-editor"}
         module={NeverlandWeb.Project.WritingLive.FormComponent.Edit}
         page_title={@page_title}
+        form={@form}
+      />
+    <% end %>
+    <%= if @edit_mode in ["idea", "outline", "from_outline"] do %>
+      <.live_component
+        id={"project-#{@project_id}-editor"}
+        module={NeverlandWeb.Project.WritingLive.FormComponent.Command}
+        page_title={@page_title}
+        edit_mode={@edit_mode}
         form={@form}
       />
     <% end %>
