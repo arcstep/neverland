@@ -8,13 +8,13 @@ defmodule NeverlandWeb.UserRegistrationLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Register for an account
+        申请一个智能体帐户
         <:subtitle>
-          Already registered?
+          已经注册过了?
           <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-            Log in
+            直接登录
           </.link>
-          to your account now.
+          管理你的智能体。
         </:subtitle>
       </.header>
 
@@ -28,14 +28,14 @@ defmodule NeverlandWeb.UserRegistrationLive do
         method="post"
       >
         <.error :if={@check_errors}>
-          Oops, something went wrong! Please check the errors below.
+          咦？你的资料中有什么不太对劲，赶紧检查一下吧！
         </.error>
 
-        <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
+        <.input field={@form[:email]} type="email" label="电子邮箱" required />
+        <.input field={@form[:password]} type="password" label="密码" required />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <.button phx-disable-with="Creating account..." class="w-full">创建一个智能体</.button>
         </:actions>
       </.simple_form>
     </div>

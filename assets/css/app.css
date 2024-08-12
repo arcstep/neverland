@@ -36,6 +36,12 @@
     height: calc(100vh - 290px);
 }
 
+@media (min-width: 1536px) {
+    .container {
+        max-width: 100%;
+    }
+}
+
 .header {
     grid-area: header;
     background-color: #f8f9fa;
