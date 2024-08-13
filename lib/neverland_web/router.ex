@@ -85,8 +85,6 @@ defmodule NeverlandWeb.Router do
       live "/projects/:id", Project.InfoLive.Show, :show
       live "/projects/:id/show/edit", Project.InfoLive.Show, :edit
       live "/projects/:id/writing", Project.WritingLive.Edit, :show
-      live "/projects/:id/writing/gen", Project.WritingLive.Edit, :gen
-      live "/projects/:id/writing/edit", Project.WritingLive.Edit, :gen
     end
   end
 

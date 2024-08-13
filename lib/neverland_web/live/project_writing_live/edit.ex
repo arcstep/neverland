@@ -19,14 +19,10 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :ok,
       socket
-      |> assign(:edit_mode, "human")
-      |> assign(:file_path, "")
-      |> assign(:file_name, "")
-      |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
-      |> assign(:form, %{"raw_content" => raw_content})
-      # |> assign(:raw_content, raw_content)
-      |> assign(:html_content, html_content)
       |> assign(:thread_id, thread_id)
+      |> assign(:edit_mode, "human")
+      |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
+      |> reset_output_file()
     }
   end
 
@@ -41,17 +37,11 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :noreply,
       socket
       |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
-      |> assign(:page_title, page_title(socket.assigns.live_action))
       |> assign(:project_id, id)
       |> assign(:info, Project.get_info!(id))
       |> assign(:file_list, file_list)
     }
   end
-
-  defp page_title(action, file_name \\ "")
-  defp page_title(:show, file_name), do: "🦋 项目文档查看" <> file_name
-  defp page_title(:gen, file_name), do: "🦋 AI写作" <> file_name
-  defp page_title(:edit, file_name), do: "🦋 直接编辑" <> file_name
 
   @impl true
   def handle_event("list_resource", _value, socket) do
@@ -70,9 +60,17 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       socket
       |> assign(:file_path, file_path)
       |> assign(:file_name, file_name)
-      |> assign(:page_title, page_title(socket.assigns.live_action, ": [ #{file_name} ]"))
+      |> assign(:page_title, "🦋 输出到文档: [ #{file_name} ]")
       |> assign(:form, %{"raw_content" => raw_content})
     }
+  end
+
+  defp reset_output_file(socket) do
+    socket
+    |> assign(:page_title, "🦋 项目文档")
+    |> assign(:file_path, "")
+    |> assign(:file_name, "")
+    |> assign(:form, %{"raw_content" => ""})
   end
 
   def handle_event("set_edit_mode", %{"value" => mode}, socket) do
@@ -88,7 +86,10 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   def handle_event("new_item", _params, socket) do
     # 处理新建事件的逻辑
-    {:noreply, socket}
+    {
+      :noreply,
+      socket |> reset_output_file
+    }
   end
 
   def handle_event("rename_item", params, socket) do

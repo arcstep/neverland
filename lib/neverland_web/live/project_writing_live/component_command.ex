@@ -13,7 +13,7 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Command do
       <.input
         type="text"
         name="title"
-        value={@page_title}
+        value={@file_name}
         placeholder="目标文件名称，例如：xxx.md"
       />
       <.simple_form
