@@ -9,13 +9,44 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Edit do
     <div>
       <h2 style="display: flex; align-items: center; justify-content: space-between;">
         <span><%= @page_title %></span>
+        <span>
+          <button
+            phx-click="new_item"
+            style="background: none; border: none; cursor: pointer; margin: 0 5px"
+            title="新建"
+          >
+            <i class="fas fa-plus"></i>
+          </button>
+          <button
+            phx-click="rename_item"
+            phx-value-name={@file_name}
+            style="background: none; border: none; cursor: pointer; margin: 0 5px"
+            title="重命名"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+          <button
+            phx-click="remove_item"
+            phx-value-name={@file_name}
+            style="background: none; border: none; cursor: pointer; margin: 0 5px"
+            title="移除"
+          >
+            <i class="fas fa-remove"></i>
+          </button>
+        </span>
       </h2>
-      <.input
-        type="text"
-        name="title"
-        value={@file_name}
-        placeholder="目标文件名称，例如：xxx.md"
-      />
+      <%= if @file_name_mode == "new" do %>
+        <div>
+          <.input
+            type="text"
+            name="title"
+            value={@file_name}
+            placeholder="目标文件名称，例如：xxx.md"
+            phx-blur="cancel_file_name_mode"
+          />
+        </div>
+      <% end %>
+
       <.simple_form
         for={@form}
         id="writing-form"

@@ -9,8 +9,8 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   def mount(_params, _session, socket) do
     IO.puts("\n[ mount ]: #{inspect(socket)}")
 
-    raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
-    html_content = convert_to_html(raw_content)
+    # raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
+    # html_content = convert_to_html(raw_content)
     thread_id = "#{socket.assigns.current_user.email}"
 
     {:ok, thread_id} =
@@ -60,17 +60,9 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       socket
       |> assign(:file_path, file_path)
       |> assign(:file_name, file_name)
-      |> assign(:page_title, "🦋 输出到文档: [ #{file_name} ]")
+      |> assign(:page_title, "🦋 输出到文档: #{file_name}")
       |> assign(:form, %{"raw_content" => raw_content})
     }
-  end
-
-  defp reset_output_file(socket) do
-    socket
-    |> assign(:page_title, "🦋 项目文档")
-    |> assign(:file_path, "")
-    |> assign(:file_name, "")
-    |> assign(:form, %{"raw_content" => ""})
   end
 
   def handle_event("set_edit_mode", %{"value" => mode}, socket) do
@@ -88,7 +80,22 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     # 处理新建事件的逻辑
     {
       :noreply,
-      socket |> reset_output_file
+      socket
+      |> reset_output_file
+      |> assign(:file_name_mode, "new")
+    }
+  end
+
+  def handle_event("cancel_file_name_mode", %{"value" => file_name} = params, socket) do
+    new_file_name = confirm_filename(file_name)
+    IO.puts("cancel_file_name_mode: #{inspect(params)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(:file_name, new_file_name)
+      |> assign(:page_title, "🦋 输出到新文档: #{new_file_name}")
+      |> assign(:file_name_mode, "common")
     }
   end
 
@@ -143,19 +150,29 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {:noreply, socket}
   end
 
+  defp reset_output_file(socket) do
+    socket
+    |> assign(:page_title, "🦋 项目文档")
+    |> assign(:file_path, "")
+    |> assign(:file_name, "")
+    |> assign(:file_name_mode, "common")
+    |> assign(:form, %{"raw_content" => ""})
+    |> assign(:raw_log, "")
+  end
+
   @impl true
   def handle_info({:thread_id, _thread_id, :event, _event, :output, output}, socket) do
     IO.puts("handling info...#{inspect(output)}")
 
-    new_raw_content = socket.assigns.raw_content <> output
+    new_raw_log = socket.assigns.raw_log <> output
 
-    html_content = convert_to_html(new_raw_content)
+    html_content = convert_to_html(new_raw_log)
     IO.puts("handling info...#{inspect(html_content)}")
 
     {
       :noreply,
       socket
-      |> assign(:raw_content, new_raw_content)
+      |> assign(:raw_log, new_raw_log)
       |> assign(:html_content, html_content)
     }
   end
@@ -164,6 +181,13 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     options = %Earmark.Options{gfm: true, breaks: true}
     Earmark.as_html!(raw_content, options)
   end
+
+  defp confirm_filename(filename) when filename == "" do
+    random_filename = for _ <- 1..8, into: "", do: <<Enum.random(?a..?z)>>
+    random_filename <> ".md"
+  end
+
+  defp confirm_filename(filename), do: filename
 
   # @impl true
   # def terminate(reason, socket) do

@@ -8,32 +8,7 @@ defmodule NeverlandWeb.Project.WritingLive.Component.FileList do
     ~H"""
     <div>
       <h3 style="display: flex; align-items: center; justify-content: space-between;">
-        <span>资源列表</span>
-        <span>
-          <button
-            phx-click="new_item"
-            style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="新建"
-          >
-            <i class="fas fa-plus"></i>
-          </button>
-          <button
-            phx-click="rename_item"
-            phx-value-name={@file_name}
-            style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="重命名"
-          >
-            <i class="fas fa-edit"></i>
-          </button>
-          <button
-            phx-click="remove_item"
-            phx-value-name={@file_name}
-            style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="移除"
-          >
-            <i class="fas fa-remove"></i>
-          </button>
-        </span>
+        <span>所有文件</span>
       </h3>
       <%= for file <- @file_list do %>
         <div>

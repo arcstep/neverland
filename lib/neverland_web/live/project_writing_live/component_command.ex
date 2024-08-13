@@ -48,24 +48,4 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Command do
     </div>
     """
   end
-
-  @impl true
-  def mount(_params, _session, socket) do
-    {
-      :ok,
-      socket
-      |> assign(:form, %{"task" => "", "completed" => "", "knowledge" => ""})
-    }
-  end
-
-  @impl true
-  def handle_event("validate", form_params, socket) do
-    IO.puts("validate: #{inspect(form_params)}")
-    {:noreply, socket}
-  end
-
-  def handle_event("save", form_params, socket) do
-    IO.puts("save: #{inspect(form_params)}")
-    {:noreply, socket}
-  end
 end
