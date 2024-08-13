@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.FormComponent.Command do
+defmodule NeverlandWeb.Project.WritingLive.Component.Edit do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 
@@ -24,38 +24,16 @@ defmodule NeverlandWeb.Project.WritingLive.FormComponent.Command do
         phx-submit="save"
       >
         <textarea
-          id="textlong-param-task"
+          id="markdown-editor"
           name="content"
-          placeholder="任务描述"
-          style="width: 100%;"
-        ><%= @form["task"] %></textarea>
-        <textarea
-          id="textlong-param-completed"
-          name="content"
-          placeholder="草稿或已完成部分"
-          style="width: 100%;"
-        ><%= @form["completed"] %></textarea>
-        <textarea
-          id="textlong-param-knowledge"
-          name="content"
-          placeholder="背景资料"
-          style="width: 100%;"
-        ><%= @form["knowledge"] %></textarea>
+          style="width: 100%; height: calc(100vh - 290px - 250px)"
+        ><%= @form["raw_content"] %></textarea>
         <:actions>
-          <.button phx-disable-with="提交...">提交</.button>
+          <.button phx-disable-with="保存...">保存</.button>
         </:actions>
       </.simple_form>
     </div>
     """
-  end
-
-  @impl true
-  def mount(_params, _session, socket) do
-    {
-      :ok,
-      socket
-      |> assign(:form, %{"task" => "", "completed" => "", "knowledge" => ""})
-    }
   end
 
   @impl true
