@@ -3,7 +3,7 @@
   <div class="header">
     <.live_component
       id={"project-#{@project_id}-header"}
-      module={NeverlandWeb.Project.WritingLive.Component.Header}
+      module={NeverlandWeb.Project.WritingLive.Header}
       info={@info}
       command={@command}
     />
@@ -13,7 +13,7 @@
     <.live_component
       pid={@pid}
       id={"project-#{@project_id}-file-list"}
-      module={NeverlandWeb.Project.WritingLive.Component.FileList}
+      module={NeverlandWeb.Project.WritingLive.FileList}
       param_output_file={@param_output_file}
       file_list={@file_list}
     />
@@ -24,7 +24,8 @@
       <.live_component
         pid={@pid}
         id={"project-#{@project_id}-editor"}
-        module={NeverlandWeb.Project.WritingLive.Command.FileEdit}
+        module={NeverlandWeb.Project.WritingLive.FileEdit}
+        command={@command}
         param_output_file={@param_output_file}
         param_content={@param_content}
       />
@@ -33,9 +34,38 @@
       <.live_component
         pid={@pid}
         id={"project-#{@project_id}-editor"}
-        module={NeverlandWeb.Project.WritingLive.Command.Idea}
+        module={NeverlandWeb.Project.WritingLive.AskAI}
+        command={@command}
+        param_task={@param_task}
         param_output_file={@param_output_file}
         param_completed={@param_completed}
+        param_knowledge={@param_knowledge}
+      />
+    <% end %>
+
+    <%= if @command == "outline" do %>
+      <.live_component
+        pid={@pid}
+        id={"project-#{@project_id}-editor"}
+        module={NeverlandWeb.Project.WritingLive.AskAI}
+        command={@command}
+        param_task={@param_task}
+        param_output_file={@param_output_file}
+        param_completed={@param_completed}
+        param_knowledge={@param_knowledge}
+      />
+    <% end %>
+
+    <%= if @command == "from_outline" do %>
+      <.live_component
+        pid={@pid}
+        id={"project-#{@project_id}-editor"}
+        module={NeverlandWeb.Project.WritingLive.AskAI}
+        command={@command}
+        param_task={@param_task}
+        param_output_file={@param_output_file}
+        param_completed={@param_completed}
+        param_knowledge={@param_knowledge}
       />
     <% end %>
 

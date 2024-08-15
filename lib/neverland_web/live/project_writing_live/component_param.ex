@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.Command.Param do
+defmodule NeverlandWeb.Project.WritingLive.Param do
   use NeverlandWeb, :live_component
   # use Phoenix.LiveComponent
 

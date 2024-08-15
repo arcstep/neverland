@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.Component.FileList do
+defmodule NeverlandWeb.Project.WritingLive.FileList do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 

@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.Command.FileEdit do
+defmodule NeverlandWeb.Project.WritingLive.FileEdit do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 
@@ -8,7 +8,7 @@ defmodule NeverlandWeb.Project.WritingLive.Command.FileEdit do
     ~H"""
     <div>
       <.live_component
-        module={NeverlandWeb.Project.WritingLive.Command.Param}
+        module={NeverlandWeb.Project.WritingLive.Param}
         pid={@pid}
         id="writing-param-output"
         mode={:show}

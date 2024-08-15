@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.Component.Header do
+defmodule NeverlandWeb.Project.WritingLive.Header do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 

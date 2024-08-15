@@ -148,7 +148,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   end
 
   def handle_info({:update_param, %{"output_file" => output_file}}, socket) do
-    IO.puts("update_parent: #{inspect(output_file)}")
+    IO.puts("update_param: #{inspect(output_file)}")
 
     {
       :noreply,
@@ -157,13 +157,33 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
+  def handle_info({:update_param, %{"task" => task}}, socket) do
+    IO.puts("update_param: #{inspect(task)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(param_task: task)
+    }
+  end
+
   def handle_info({:update_param, %{"completed" => completed}}, socket) do
-    IO.puts("update_parent: #{inspect(completed)}")
+    IO.puts("update_param: #{inspect(completed)}")
 
     {
       :noreply,
       socket
       |> assign(param_completed: completed)
+    }
+  end
+
+  def handle_info({:update_param, %{"knowledge" => knowledge}}, socket) do
+    IO.puts("update_param: #{inspect(knowledge)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(param_knowledge: knowledge)
     }
   end
 
