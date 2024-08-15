@@ -18,13 +18,16 @@ defmodule NeverlandWeb.Project.WritingLive.FileEdit do
         value={@param_output_file}
       />
 
-      <textarea
+      <.live_component
+        module={NeverlandWeb.Project.WritingLive.Param}
         pid={@pid}
-        id="markdown-editor"
-        name="content"
-        style="width: 100%; height: calc(100vh - 290px - 250px)"
-      ><%= @param_content %></textarea>
-      <.button phx-disable-with="保存...">保存</.button>
+        id="writing-param-content"
+        mode={:edit}
+        compponent_type={:textarea}
+        title="文本内容"
+        value_id="content"
+        value={@param_content}
+      />
     </div>
     """
   end

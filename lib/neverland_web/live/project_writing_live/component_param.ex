@@ -10,7 +10,7 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
     <div>
       <h2 style="display: flex; align-items: center; justify-content: space-between;">
         <span>
-          <%= @title <> ": " <> @value %>
+          <%= String.slice(@title <> ": " <> @value, 0..50) %>
           <button
             phx-click="edit_param"
             phx-target={@myself}
@@ -40,7 +40,7 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
       <%= if @mode == :edit and @compponent_type == :textarea do %>
         <div style="display: flex; ">
           <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
-            <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%;"><%= @value %></textarea>
+            <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%; height: 300px"><%= @value %></textarea>
             <button>保存</button>
             <button
               phx-click="cancel_edit"

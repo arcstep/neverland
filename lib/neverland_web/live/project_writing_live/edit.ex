@@ -187,6 +187,16 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
+  def handle_info({:update_param, %{"content" => content}}, socket) do
+    IO.puts("update_param: #{inspect(content)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(param_content: content)
+    }
+  end
+
   defp convert_to_html(raw_content) do
     options = %Earmark.Options{gfm: true, breaks: true}
     Earmark.as_html!(raw_content, options)
