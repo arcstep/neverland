@@ -40,7 +40,7 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
       <%= if @mode == :edit and @compponent_type == :textarea do %>
         <div style="display: flex; ">
           <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
-            <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%; height: 300px"><%= @value %></textarea>
+            <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%; height: 260px"><%= @value %></textarea>
             <button>保存</button>
             <button
               phx-click="cancel_edit"
