@@ -21,20 +21,36 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
           </button>
         </span>
       </h2>
-      <%= if @mode == :edit do %>
+      <%= if @mode == :edit and @compponent_type == :input do %>
         <div style="display: flex; ">
-          <.form for={%{}} phx-submit="save" phx-target={@myself}>
-            <input id={@value_id} type="text" name={@value_id} value={@value} />
+          <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
+            <input id={@value_id} type="text" name={@value_id} value={@value} style="width: 70%;" />
             <button>保存</button>
+            <button
+              phx-click="cancel_edit"
+              phx-target={@myself}
+              style="background: none; border: none; cursor: pointer; margin: 0 5px"
+              title="取消"
+            >
+              取消
+            </button>
           </.form>
-          <button
-            phx-click="cancel_edit"
-            phx-target={@myself}
-            style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="取消"
-          >
-            取消
-          </button>
+        </div>
+      <% end %>
+      <%= if @mode == :edit and @compponent_type == :textarea do %>
+        <div style="display: flex; ">
+          <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
+            <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%;"><%= @value %></textarea>
+            <button>保存</button>
+            <button
+              phx-click="cancel_edit"
+              phx-target={@myself}
+              style="background: none; border: none; cursor: pointer; margin: 0 5px"
+              title="取消"
+            >
+              取消
+            </button>
+          </.form>
         </div>
       <% end %>
     </div>

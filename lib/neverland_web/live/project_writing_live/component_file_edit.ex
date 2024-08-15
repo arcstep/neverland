@@ -12,6 +12,7 @@ defmodule NeverlandWeb.Project.WritingLive.FileEdit do
         pid={@pid}
         id="writing-param-output"
         mode={:show}
+        compponent_type={:input}
         title="输出文件"
         value_id="output_file"
         value={@param_output_file}
