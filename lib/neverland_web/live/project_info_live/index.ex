@@ -55,6 +55,7 @@ defmodule NeverlandWeb.Project.InfoLive.Index do
 
   @impl true
   def handle_info({NeverlandWeb.ProjectInfoLive.FormComponent, {:saved, info}}, socket) do
+    IO.puts("handle_info: #{inspect(info)}")
     {:noreply, stream_insert(socket, :infos, info)}
   end
 

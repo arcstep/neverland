@@ -17,17 +17,11 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
         id="info-form"
         phx-target={@myself}
         phx-change="validate"
-        phx-submit="save"
+        phx-submit="save_project"
       >
         <.input field={@form[:title]} type="text" label="标题" />
         <.input field={@form[:description]} type="text" label="描述" />
         <.input field={@form[:public]} type="checkbox" label="是否公开" />
-        <.input
-          field={@form[:state]}
-          type="select"
-          label="项目状态"
-          options={[{"等待", "wait"}, {"待办", "todo"}, {"完成", "done"}]}
-        />
         <:actions>
           <.button phx-disable-with="保存...">保存项目基本信息</.button>
         </:actions>
@@ -45,12 +39,13 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
     new_info =
       case info.id do
         nil ->
-          {:ok, init_info} = Project.create_info(%{})
-          init_info
+          Project.new_info(%{}).data
 
         _ ->
           info
       end
+
+    IO.puts("update_info: #{inspect(new_info)}")
 
     # IO.puts("info: #{inspect(info)}")
     # IO.puts("new_info: #{inspect(new_info)}")
@@ -72,11 +67,14 @@ defmodule NeverlandWeb.ProjectInfoLive.FormComponent do
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
-  def handle_event("save", %{"info" => info_params}, socket) do
+  def handle_event("save_project", %{"info" => info_params}, socket) do
+    IO.puts("save_info: #{inspect(info_params)}")
     save_info(socket, socket.assigns.action, info_params)
   end
 
   defp save_info(socket, :edit, info_params) do
+    IO.puts("edit_info: #{inspect(info_params)}")
+
     case Project.update_info(socket.assigns.info, info_params) do
       {:ok, info} ->
         notify_parent({:saved, info})
