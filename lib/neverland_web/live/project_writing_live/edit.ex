@@ -19,6 +19,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :ok,
       socket
+      |> assign(:pid, :erlang.pid_to_list(self()))
       |> assign(:command, "edit")
       |> assign(:param_output_file, "")
       |> assign(:param_task, "")
@@ -59,6 +60,25 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       :noreply,
       socket
       |> assign(:param_output_file, "")
+    }
+  end
+
+  def handle_event("update_header_choose_command", %{"value" => command}, socket) do
+    IO.puts("choose_command: #{inspect(command)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(:command, command)
+    }
+  end
+
+  def handle_event("update_param_value", value, socket) do
+    IO.puts("update_param_value: #{inspect(value)}")
+
+    {
+      :noreply,
+      socket
     }
   end
 
@@ -124,6 +144,26 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       socket
       |> assign(:raw_log, new_raw_log)
       |> assign(:html_content, html_content)
+    }
+  end
+
+  def handle_info({:update_param, %{"output_file" => output_file}}, socket) do
+    IO.puts("update_parent: #{inspect(output_file)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(param_output_file: output_file)
+    }
+  end
+
+  def handle_info({:update_param, %{"completed" => completed}}, socket) do
+    IO.puts("update_parent: #{inspect(completed)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(param_completed: completed)
     }
   end
 

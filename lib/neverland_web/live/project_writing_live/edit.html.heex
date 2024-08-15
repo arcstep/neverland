@@ -11,6 +11,7 @@
 
   <aside class="sidebar">
     <.live_component
+      pid={@pid}
       id={"project-#{@project_id}-file-list"}
       module={NeverlandWeb.Project.WritingLive.Component.FileList}
       param_output_file={@param_output_file}
@@ -21,11 +22,20 @@
   <main class="content">
     <%= if @command == "edit" do %>
       <.live_component
+        pid={@pid}
         id={"project-#{@project_id}-editor"}
-        module={NeverlandWeb.Project.WritingLive.Component.FileEdit}
+        module={NeverlandWeb.Project.WritingLive.Command.FileEdit}
+        param_output_file={@param_output_file}
+        param_content={@param_content}
+      />
+    <% end %>
+    <%= if @command == "idea" do %>
+      <.live_component
+        pid={@pid}
+        id={"project-#{@project_id}-editor"}
+        module={NeverlandWeb.Project.WritingLive.Command.Idea}
         param_output_file={@param_output_file}
         param_completed={@param_completed}
-        param_content={@param_content}
       />
     <% end %>
 

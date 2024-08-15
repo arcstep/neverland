@@ -1,4 +1,4 @@
-defmodule NeverlandWeb.Project.WritingLive.Component.Param do
+defmodule NeverlandWeb.Project.WritingLive.Command.Param do
   use NeverlandWeb, :live_component
   # use Phoenix.LiveComponent
 
@@ -15,7 +15,7 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Param do
             phx-click="edit_param"
             phx-target={@myself}
             style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="新建"
+            title={"修改" <> @title}
           >
             <i class="fas fa-edit"></i>
           </button>
@@ -23,14 +23,17 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Param do
       </h2>
       <%= if @mode == :edit do %>
         <div style="display: flex; ">
-          <.input type="text" name="title" value={@value} placeholder="请输入..." />
+          <.form for={%{}} phx-submit="save" phx-target={@myself}>
+            <input id={@value_id} type="text" name={@value_id} value={@value} />
+            <button>保存</button>
+          </.form>
           <button
             phx-click="cancel_edit"
             phx-target={@myself}
             style="background: none; border: none; cursor: pointer; margin: 0 5px"
-            title="关闭"
+            title="取消"
           >
-            <i class="fas fa-close" style="margin: 0 5px"></i>关闭
+            取消
           </button>
         </div>
       <% end %>
@@ -39,9 +42,21 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Param do
   end
 
   @impl true
-  def handle_event("edit_param", value, socket) do
-    IO.puts("edit_param: #{inspect(value)}")
+  def handle_event("save", value, socket) do
+    IO.puts("save: #{inspect(value)} / #{inspect(socket.assigns)}")
 
+    # 发送更新到父组件
+    pid = :erlang.list_to_pid(socket.assigns.pid)
+    send(pid, {:update_param, value})
+
+    {
+      :noreply,
+      socket
+      |> assign(:mode, :show)
+    }
+  end
+
+  def handle_event("edit_param", _, socket) do
     {
       :noreply,
       socket
@@ -49,9 +64,7 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Param do
     }
   end
 
-  def handle_event("cancel_edit", value, socket) do
-    IO.puts("cancel_edit: #{inspect(value)}")
-
+  def handle_event("cancel_edit", _, socket) do
     {
       :noreply,
       socket
