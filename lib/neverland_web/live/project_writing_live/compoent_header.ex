@@ -20,41 +20,56 @@ defmodule NeverlandWeb.Project.WritingLive.Component.Header do
         <label style="margin-right: 10px;">
           <input
             type="radio"
-            name="edit_mode"
-            value="human"
-            phx-click="set_edit_mode"
-            checked={if @edit_mode == "human", do: true, else: false}
+            name="command"
+            value="edit"
+            phx-click="choose_command"
+            phx-target={@myself}
+            checked={if @command == "edit", do: true, else: false}
           /> 编辑
         </label>
         <label style="margin-right: 10px;">
           <input
             type="radio"
-            name="edit_mode"
+            name="command"
             value="idea"
-            phx-click="set_command_mode"
-            checked={if @edit_mode == "idea", do: true, else: false}
+            phx-click="choose_command"
+            phx-target={@myself}
+            checked={if @command == "idea", do: true, else: false}
           /> 创意
         </label>
         <label style="margin-right: 10px;">
           <input
             type="radio"
-            name="edit_mode"
+            name="command"
             value="outline"
-            phx-click="set_command_mode"
-            checked={if @edit_mode == "outline", do: true, else: false}
+            phx-click="choose_command"
+            phx-target={@myself}
+            checked={if @command == "outline", do: true, else: false}
           /> 提纲
         </label>
         <label style="margin-right: 10px;">
           <input
             type="radio"
-            name="edit_mode"
+            name="command"
             value="from_outline"
-            phx-click="set_command_mode"
-            checked={if @edit_mode == "from_outline", do: true, else: false}
+            phx-click="choose_command"
+            phx-target={@myself}
+            checked={if @command == "from_outline", do: true, else: false}
           /> 扩写
         </label>
       </div>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("choose_command", %{"value" => command}, socket) do
+    IO.puts("choose_command: #{inspect(command)}")
+
+    {
+      :noreply,
+      socket
+      |> assign(:command, command)
+    }
   end
 end

@@ -14,7 +14,7 @@ defmodule NeverlandWeb.Project.WritingLive.Component.FileList do
         <div>
           <span
             class="icon"
-            style={if file.path == @file_path, do: "color: #009688;", else: "color: #888888;"}
+            style={if file.name == @param_output_file, do: "color: #009688;", else: "color: #888888;"}
           >
             <%= raw(
               case file.extension do
@@ -31,10 +31,10 @@ defmodule NeverlandWeb.Project.WritingLive.Component.FileList do
             ) %>
           </span>
           <.link
-            phx-click="open_file"
+            phx-click="update_file_list_selected"
             phx-value-path={file.path}
             phx-value-name={file.name}
-            style={if file.path == @file_path, do: "text-decoration: underline;", else: ""}
+            style={if file.name == @param_output_file, do: "text-decoration: underline;", else: ""}
           >
             <%= file.name %>
           </.link>
@@ -42,16 +42,5 @@ defmodule NeverlandWeb.Project.WritingLive.Component.FileList do
       <% end %>
     </div>
     """
-  end
-
-  @impl true
-  def handle_event("validate", form_params, socket) do
-    IO.puts("validate: #{inspect(form_params)}")
-    {:noreply, socket}
-  end
-
-  def handle_event("save", form_params, socket) do
-    IO.puts("save: #{inspect(form_params)}")
-    {:noreply, socket}
   end
 end

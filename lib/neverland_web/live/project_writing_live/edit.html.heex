@@ -4,9 +4,8 @@
     <.live_component
       id={"project-#{@project_id}-header"}
       module={NeverlandWeb.Project.WritingLive.Component.Header}
-      page_title={@page_title}
       info={@info}
-      edit_mode={@edit_mode}
+      command={@command}
     />
   </div>
 
@@ -14,31 +13,19 @@
     <.live_component
       id={"project-#{@project_id}-file-list"}
       module={NeverlandWeb.Project.WritingLive.Component.FileList}
-      file_name={@file_name}
-      file_path={@file_path}
+      param_output_file={@param_output_file}
       file_list={@file_list}
     />
   </aside>
 
   <main class="content">
-    <%= if @edit_mode == "human" do %>
+    <%= if @command == "edit" do %>
       <.live_component
         id={"project-#{@project_id}-editor"}
-        module={NeverlandWeb.Project.WritingLive.Component.Edit}
-        page_title={@page_title}
-        file_name={@file_name}
-        file_name_mode={@file_name_mode}
-        form={@form}
-      />
-    <% end %>
-    <%= if @edit_mode in ["idea", "outline", "from_outline"] do %>
-      <.live_component
-        id={"project-#{@project_id}-editor"}
-        module={NeverlandWeb.Project.WritingLive.Component.Command}
-        page_title={@page_title}
-        file_name={@file_name}
-        edit_mode={@edit_mode}
-        form={@form}
+        module={NeverlandWeb.Project.WritingLive.Component.FileEdit}
+        param_output_file={@param_output_file}
+        param_completed={@param_completed}
+        param_content={@param_content}
       />
     <% end %>
 
