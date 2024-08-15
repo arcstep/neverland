@@ -25,7 +25,7 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
         <div style="display: flex; ">
           <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
             <input id={@value_id} type="text" name={@value_id} value={@value} style="width: 70%;" />
-            <button>保存</button>
+            <button>确认</button>
             <button
               phx-click="cancel_edit"
               phx-target={@myself}
@@ -41,7 +41,7 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
         <div style="display: flex; ">
           <.form for={%{}} phx-submit="save" phx-target={@myself} style="width: 100%;">
             <textarea pid={@pid} id={@value_id} name={@value_id} style="width: 70%; height: 260px"><%= @value %></textarea>
-            <button>保存</button>
+            <button>确认</button>
             <button
               phx-click="cancel_edit"
               phx-target={@myself}
@@ -73,11 +73,10 @@ defmodule NeverlandWeb.Project.WritingLive.Param do
   end
 
   def handle_event("edit_param", _, socket) do
-    {
-      :noreply,
-      socket
-      |> assign(:mode, :edit)
-    }
+    case socket.assigns.mode do
+      :show -> {:noreply, socket |> assign(:mode, :edit)}
+      _ -> {:noreply, socket |> assign(:mode, :show)}
+    end
   end
 
   def handle_event("cancel_edit", _, socket) do

@@ -2,6 +2,12 @@ defmodule NeverlandWeb.Project.WritingLive.FileEdit do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 
+  defp confirm_filename(filename) when filename == "" do
+    random_filename = for _ <- 1..8, into: "", do: <<Enum.random(?a..?z)>>
+    random_filename <> ".md"
+  end
+
+  defp confirm_filename(filename), do: filename
 
   @impl true
   def render(assigns) do
@@ -15,7 +21,7 @@ defmodule NeverlandWeb.Project.WritingLive.FileEdit do
         compponent_type={:input}
         title="输出文件"
         value_id="output_file"
-        value={@param_output_file}
+        value={confirm_filename(@param_output_file)}
       />
 
       <.live_component

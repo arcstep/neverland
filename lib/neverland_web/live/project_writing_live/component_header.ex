@@ -3,6 +3,13 @@ defmodule NeverlandWeb.Project.WritingLive.Header do
 
   # alias Neverland.Project 
 
+  def get_timeinfo(time_str) do
+    Timex.format!(
+      time_str,
+      "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}"
+    )
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -10,10 +17,7 @@ defmodule NeverlandWeb.Project.WritingLive.Header do
       <div style="flex-grow: 1;">
         <%= @info.title %>
         <span style="color: gray; font-size: small;">
-          由 <%= @info.owner %> 更新于 <%= Timex.format!(
-            @info.updated_at,
-            "{YYYY}-{0M}-{0D} {h24}:{0m}:{0s}"
-          ) %>
+          更新于 <%= get_timeinfo(@info.updated_at) %>
         </span>
       </div>
       <div style="display: flex; align-items: center;">
