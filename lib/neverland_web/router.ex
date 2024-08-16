@@ -20,9 +20,6 @@ defmodule NeverlandWeb.Router do
   scope "/", NeverlandWeb do
     pipe_through :browser
 
-    get "/hello", HelloController, :world
-    get "/hello/:messenger", HelloController, :show
-    get "/help", HelloController, :help
     get "/", PageController, :home
   end
 
@@ -71,13 +68,6 @@ defmodule NeverlandWeb.Router do
       on_mount: [{NeverlandWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-      live "/guess", WrongLive
-
-      live "/products", ProductLive.Index, :index
-      live "/products/new", ProductLive.Index, :new
-      live "/products/:id/edit", ProductLive.Index, :edit
-      live "/products/:id", ProductLive.Show, :show
-      live "/products/:id/show/edit", ProductLive.Show, :edit
 
       live "/projects", Project.InfoLive.Index, :index
       live "/projects/new", Project.InfoLive.Index, :new
