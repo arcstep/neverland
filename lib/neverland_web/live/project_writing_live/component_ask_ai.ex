@@ -55,6 +55,9 @@ defmodule NeverlandWeb.Project.WritingLive.AskAI do
         value_id="task"
         value={@param_task}
       />
+      <div>
+        <.button phx-click="ask-ai">提交</.button>
+      </div>
     </div>
     """
   end

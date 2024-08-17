@@ -27,6 +27,8 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:param_knowledge, "")
       |> assign(:param_content, "")
       |> assign(:thread_id, thread_id)
+      |> assign(:raw_log, "")
+      |> assign(:html_content, "")
     }
   end
 
@@ -97,26 +99,25 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
-  def handle_event("submit_form", params, socket) do
+  def handle_event("ask-ai", _params, socket) do
     thread_id = socket.assigns.thread_id
-
-    # 获取表单参数
-    task = params["task"]
-    completed = params["completed"]
-    knowledge = params["knowledge"]
-    action = params["action"]
+    task = socket.assigns.param_task
+    completed = socket.assigns.param_completed
+    knowledge = socket.assigns.param_knowledge
+    output_file = socket.assigns.param_output_file
+    action = socket.assigns.command
 
     # 根据action执行不同的逻辑
     cmd =
       case action do
         "idea" ->
-          "p.idea(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
+          "p.idea(task='#{task}', completed='#{completed}', knowledge='#{knowledge}', output_file='#{output_file}')"
 
         "outline" ->
-          "p.outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
+          "p.outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}', output_file='#{output_file}'))"
 
         "from_outline" ->
-          "p.from_outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}')"
+          "p.from_outline(task='#{task}', completed='#{completed}', knowledge='#{knowledge}', output_file='#{output_file}'))"
 
         _ ->
           # 默认处理
@@ -124,7 +125,6 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       end
 
     Python.input(:sandbox_python, cmd, thread_id)
-    # IO.puts("idea: #{completed}, #{knowledge}, #{task}, #{action}")
 
     # 返回更新后的socket
     {:noreply, socket}
