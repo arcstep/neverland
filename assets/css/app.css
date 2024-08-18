@@ -4,6 +4,27 @@
 @import "../../node_modules/github-markdown-css/github-markdown-light.css";
 
 /* This file is for your main application CSS */
+
+/* 根页面布局 */
+body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    margin: 0;
+}
+
+.root-header,
+.root-footer {
+    background-color: white;
+    z-index: 10;
+}
+
+.root-content {
+    overflow-y: auto;
+}
+
+/* */
+
 .tools-panel {
     padding: 5px;
 }
