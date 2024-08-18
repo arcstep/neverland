@@ -37,6 +37,7 @@ defmodule Neverland.Sandbox.Python do
   end
 
   def input(pid, input, thread_id) do
+    IO.puts("\n[ input ]: #{inspect(input)}")
     GenServer.call(pid, {:input, input, :thread_id, thread_id})
   end
 

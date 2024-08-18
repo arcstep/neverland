@@ -2,12 +2,12 @@ defmodule NeverlandWeb.Project.WritingLive.AskAI do
   use NeverlandWeb, :live_component
 
   # alias Neverland.Project 
-  defp confirm_filename(filename) when filename == "" do
-    random_filename = for _ <- 1..8, into: "", do: <<Enum.random(?a..?z)>>
-    random_filename <> ".md"
-  end
+  # defp confirm_filename(filename) when filename == "" do
+  #   random_filename = for _ <- 1..8, into: "", do: <<Enum.random(?a..?z)>>
+  #   random_filename <> ".md"
+  # end
 
-  defp confirm_filename(filename), do: filename
+  # defp confirm_filename(filename), do: filename
 
   @impl true
   def render(assigns) do
@@ -21,14 +21,14 @@ defmodule NeverlandWeb.Project.WritingLive.AskAI do
         compponent_type={:input}
         title="输出文件"
         value_id="output_file"
-        value={confirm_filename(@param_output_file)}
+        value={@param_output_file}
       />
       <hr style="margin: 10px 0;" />
       <.live_component
         module={NeverlandWeb.Project.WritingLive.Param}
         pid={@pid}
         id="writing-param-completed"
-        mode={if @command == "from_outline", do: :edit, else: :show}
+        mode={if @command == "from_outline" and @param_completed == "", do: :edit, else: :show}
         compponent_type={:input}
         title="已完成"
         value_id="completed"
@@ -49,7 +49,7 @@ defmodule NeverlandWeb.Project.WritingLive.AskAI do
         module={NeverlandWeb.Project.WritingLive.Param}
         pid={@pid}
         id="writing-param-task"
-        mode={if @command in ["idea", "outline"], do: :edit, else: :show}
+        mode={if @command in ["idea", "outline"] and @param_task == "", do: :edit, else: :show}
         compponent_type={:textarea}
         title="写作任务"
         value_id="task"

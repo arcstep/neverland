@@ -10,8 +10,8 @@ from textlong import WritingProject, list_projects, init_project, is_project_exi
 
 from langchain_community.llms import Tongyi
 
-p = WritingProject(llm=Tongyi(model="qwen2-0.5b-instruct"), project_id="我的项目2")
+p = WritingProject(llm=Tongyi(model="qwen2-0.5b-instruct"), project_id="我的项目")
 
-print(list_projects())
+# print(list_projects())
 # p.chat("你好，我是一个AI。")
 

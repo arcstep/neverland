@@ -22,6 +22,9 @@ defmodule NeverlandWeb.Project.WritingLive.Header do
       </div>
       <div style="display: flex; align-items: center;">
         <label style="margin-right: 10px;">
+          <button phx-click="get-command">测试</button>
+        </label>
+        <label style="margin-right: 10px;">
           <input
             type="radio"
             name="command"

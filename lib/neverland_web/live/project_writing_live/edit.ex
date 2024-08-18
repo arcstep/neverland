@@ -34,29 +34,24 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    # IO.puts("\n[ handle_params ]: #{inspect(socket)}")
-    project_info = Project.get_info!(id)
-    # IO.puts("\n[ project_info ]: #{inspect(project_info.title)}")
-    file_list = Resource.file_list(project_info.title)
-
     {
       :noreply,
       socket
-      |> assign(:input, %{"action" => "idea", "task" => "", "completed" => "", "knowledge" => ""})
       |> assign(:project_id, id)
-      |> assign(:info, Project.get_info!(id))
-      |> assign(:file_list, file_list)
+      |> refresh_file_list(id)
     }
   end
 
-  @impl true
-  def handle_event("list_resource", _value, socket) do
-    thread_id = socket.assigns.thread_id
-    Python.input(:sandbox_python, "p.list_resource()", thread_id)
+  defp refresh_file_list(socket, id) do
+    project_info = Project.get_info!(id)
+    file_list = Resource.file_list(project_info.title)
 
-    {:noreply, socket}
+    socket
+    |> assign(:info, Project.get_info!(id))
+    |> assign(:file_list, file_list)
   end
 
+  @impl true
   def handle_event("cancel_file_select", _param, socket) do
     {
       :noreply,
@@ -99,6 +94,22 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     }
   end
 
+  def handle_event("get-command", _, socket) do
+    IO.puts(
+      "get-command: " <>
+        "#{socket.assigns.command}, " <>
+        "#{socket.assigns.param_task}, " <>
+        "#{socket.assigns.param_completed}, " <>
+        "#{socket.assigns.param_knowledge}, " <>
+        "#{socket.assigns.param_output_file}"
+    )
+
+    {
+      :noreply,
+      socket
+    }
+  end
+
   def handle_event("ask-ai", _params, socket) do
     thread_id = socket.assigns.thread_id
     task = socket.assigns.param_task
@@ -131,17 +142,22 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   end
 
   @impl true
-  def handle_info({:thread_id, _thread_id, :event, _event, :output, output}, socket) do
-    IO.puts("handling info...#{inspect(output)}")
+  def handle_info({:thread_id, _thread_id, :event, event, :output, output}, socket) do
+    # IO.puts("handling info...#{event}: #{inspect(output)}")
+    socket_with_file_list =
+      case event do
+        "END" -> socket |> refresh_file_list(socket.assigns.project_id)
+        _ -> socket
+      end
 
     new_raw_log = socket.assigns.raw_log <> output
 
     html_content = convert_to_html(new_raw_log)
-    IO.puts("handling info...#{inspect(html_content)}")
+    # IO.puts("handling info...#{inspect(html_content)}")
 
     {
       :noreply,
-      socket
+      socket_with_file_list
       |> assign(:raw_log, new_raw_log)
       |> assign(:html_content, html_content)
     }
@@ -163,7 +179,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
-      |> assign(param_task: task)
+      |> assign(:param_task, task)
     }
   end
 
@@ -173,7 +189,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
-      |> assign(param_completed: completed)
+      |> assign(:param_completed, completed)
     }
   end
 
@@ -183,7 +199,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
-      |> assign(param_knowledge: knowledge)
+      |> assign(:param_knowledge, knowledge)
     }
   end
 
@@ -193,7 +209,7 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
     {
       :noreply,
       socket
-      |> assign(param_content: content)
+      |> assign(:param_content, content)
     }
   end
 
