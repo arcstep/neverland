@@ -1,0 +1,6 @@
+base_folder: priv/data/projects
+project_id: abc
+output_files:
+- output.md
+embedding_files: []
+publish_files: []

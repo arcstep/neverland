@@ -7,15 +7,6 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   @impl true
   def mount(_params, _session, socket) do
-    # IO.puts("\n[ mount ]: #{inspect(socket)}")
-
-    # raw_content = "# 这是一个测试内容\n嗯嗯，我今天的感觉还不错"
-    # html_content = convert_to_html(raw_content)
-    thread_id = "#{socket.assigns.current_user.email}"
-
-    {:ok, thread_id} =
-      Python.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
-
     {
       :ok,
       socket
@@ -26,7 +17,6 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
       |> assign(:param_completed, "")
       |> assign(:param_knowledge, "")
       |> assign(:param_content, "")
-      |> assign(:thread_id, thread_id)
       |> assign(:raw_log, "")
       |> assign(:html_content, "")
     }
@@ -34,10 +24,19 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    thread_id = "#{socket.assigns.current_user.email}:#{id}"
+    project_info = Project.get_info!(id)
+
+    {:ok, thread_id} =
+      Python.run(:sandbox_python, "chat_with_textlong.py", self(), thread_id)
+
+    Python.input(:sandbox_python, project_info.title, thread_id)
+
     {
       :noreply,
       socket
       |> assign(:project_id, id)
+      |> assign(:thread_id, thread_id)
       |> refresh_file_list(id)
     }
   end
@@ -142,25 +141,30 @@ defmodule NeverlandWeb.Project.WritingLive.Edit do
   end
 
   @impl true
-  def handle_info({:thread_id, _thread_id, :event, event, :output, output}, socket) do
-    # IO.puts("handling info...#{event}: #{inspect(output)}")
-    socket_with_file_list =
-      case event do
-        "END" -> socket |> refresh_file_list(socket.assigns.project_id)
-        _ -> socket
-      end
+  def handle_info({:thread_id, thread_id, :event, event, :output, output}, socket) do
+    if thread_id != socket.assigns.thread_id do
+      IO.puts("receive OTHER thread_id: #{thread_id}")
+      {:noreply, socket}
+    else
+      # IO.puts("handling info...#{event}: #{inspect(output)}")
+      socket_with_file_list =
+        case event do
+          "END" -> socket |> refresh_file_list(socket.assigns.project_id)
+          _ -> socket
+        end
 
-    new_raw_log = socket.assigns.raw_log <> output
+      new_raw_log = socket.assigns.raw_log <> output
 
-    html_content = convert_to_html(new_raw_log)
-    # IO.puts("handling info...#{inspect(html_content)}")
+      html_content = convert_to_html(new_raw_log)
+      # IO.puts("handling info...#{inspect(html_content)}")
 
-    {
-      :noreply,
-      socket_with_file_list
-      |> assign(:raw_log, new_raw_log)
-      |> assign(:html_content, html_content)
-    }
+      {
+        :noreply,
+        socket_with_file_list
+        |> assign(:raw_log, new_raw_log)
+        |> assign(:html_content, html_content)
+      }
+    end
   end
 
   def handle_info({:update_param, %{"output_file" => output_file}}, socket) do
