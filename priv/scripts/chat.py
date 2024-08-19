@@ -1,6 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.expanduser('~/github/textlong'))
+
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
-import os
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_zhipu import ChatZhipuAI
