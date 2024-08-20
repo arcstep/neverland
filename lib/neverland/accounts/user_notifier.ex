@@ -8,7 +8,7 @@ defmodule Neverland.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Neverland", "contact@example.com"})
+      |> from({"🦋 Neverland", "support@illufly.com"})
       |> subject(subject)
       |> text_body(body)
 

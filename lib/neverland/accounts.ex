@@ -5,7 +5,6 @@ defmodule Neverland.Accounts do
 
   import Ecto.Query, warn: false
   alias Neverland.Repo
-
   alias Neverland.Accounts.{User, UserToken, UserNotifier}
 
   ## Database getters
@@ -78,6 +77,15 @@ defmodule Neverland.Accounts do
     %User{}
     |> User.registration_changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, user} ->
+        deliver_user_confirmation_instructions(user, &"/users/confirm/#{&1}")
+
+        {:ok, user}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

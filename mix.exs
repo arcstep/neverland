@@ -19,7 +19,8 @@ defmodule Neverland.MixProject do
   def application do
     [
       mod: {Neverland.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      # 添加 :dotenv
+      extra_applications: [:logger, :runtime_tools, :dotenv]
     ]
   end
 
@@ -32,6 +33,7 @@ defmodule Neverland.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:dotenv, "~> 3.1.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:elixir_uuid, "~> 1.2"},
       {:phoenix, "~> 1.7.14"},
@@ -57,6 +59,8 @@ defmodule Neverland.MixProject do
         depth: 1
       },
       {:swoosh, "~> 1.5"},
+      {:certifi, "~> 2.5"},
+      {:gen_smtp, "~> 1.0"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

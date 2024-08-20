@@ -21,6 +21,7 @@ defmodule NeverlandWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/users/confirm/:token", UserConfirmationLive, :edit
   end
 
   # Other scopes may use custom stacks.

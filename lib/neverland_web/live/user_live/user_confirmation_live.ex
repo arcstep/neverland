@@ -6,18 +6,17 @@ defmodule NeverlandWeb.UserConfirmationLive do
   def render(%{live_action: :edit} = assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">Confirm Account</.header>
+      <.header class="text-center">确认您需要创立帐户</.header>
 
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
         <:actions>
-          <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
+          <.button phx-disable-with="Confirming..." class="w-full">确认我的帐户</.button>
         </:actions>
       </.simple_form>
 
       <p class="text-center mt-4">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
+        <.link href={~p"/users/register"}>注册</.link> | <.link href={~p"/users/log_in"}>登录</.link>
       </p>
     </div>
     """
@@ -33,10 +32,12 @@ defmodule NeverlandWeb.UserConfirmationLive do
   def handle_event("confirm_account", %{"user" => %{"token" => token}}, socket) do
     case Accounts.confirm_user(token) do
       {:ok, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "User confirmed successfully.")
-         |> redirect(to: ~p"/")}
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "用户确认成功！")
+          |> redirect(to: ~p"/")
+        }
 
       :error ->
         # If there is a current user and the account was already confirmed,
@@ -48,10 +49,12 @@ defmodule NeverlandWeb.UserConfirmationLive do
             {:noreply, redirect(socket, to: ~p"/")}
 
           %{} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, "User confirmation link is invalid or it has expired.")
-             |> redirect(to: ~p"/")}
+            {
+              :noreply,
+              socket
+              |> put_flash(:error, "用户确认链接无效或已经过期。")
+              |> redirect(to: ~p"/")
+            }
         end
     end
   end

@@ -42,4 +42,6 @@ npm-debug.log
 priv/scripts/__pycache__/
 priv/scripts/*__repl__.py
 
+priv/keys/
+
 node_modules/

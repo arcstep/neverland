@@ -3,6 +3,7 @@ defmodule NeverlandWeb.UserRegistrationLive do
 
   alias Neverland.Accounts
   alias Neverland.Accounts.User
+  require Logger
 
   def render(assigns) do
     ~H"""
@@ -56,14 +57,22 @@ defmodule NeverlandWeb.UserRegistrationLive do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        {:ok, _} =
-          Accounts.deliver_user_confirmation_instructions(
-            user,
-            &url(~p"/users/confirm/#{&1}")
-          )
+        case Accounts.deliver_user_confirmation_instructions(
+               user,
+               &url(~p"/users/confirm/#{&1}")
+             ) do
+          {:ok, _} ->
+            changeset = Accounts.change_user_registration(user)
+            {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 
-        changeset = Accounts.change_user_registration(user)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+          {:error, {:retries_exceeded, {:network_failure, host, reason}}} ->
+            Logger.error("Network failure when trying to reach #{host}: #{inspect(reason)}")
+            {:noreply, put_flash(socket, :error, "Network error, please try again later.")}
+
+          {:error, reason} ->
+            Logger.error("Unexpected error: #{inspect(reason)}")
+            {:noreply, put_flash(socket, :error, "An unexpected error occurred.")}
+        end
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
