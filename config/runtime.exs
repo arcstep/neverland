@@ -70,14 +70,14 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :neverland, NeverlandWeb.Endpoint,
-  #       https: [
-  #         ...,
-  #         port: 443,
-  #         cipher_suite: :strong,
-  #         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
-  #         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
-  #       ]
+  # config :neverland, NeverlandWeb.Endpoint,
+  #   https: [
+  #     ...,
+  #     port: 443,
+  #     cipher_suite: :strong,
+  #     keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
+  #     certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
+  #   ]
   #
   # The `cipher_suite` is set to `:strong` to support only the
   # latest and more secure SSL ciphers. This means old browsers
@@ -92,8 +92,8 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your config/prod.exs,
   # ensuring no data is ever sent via http, always redirecting to https:
   #
-  #     config :neverland, NeverlandWeb.Endpoint,
-  #       force_ssl: [hsts: true]
+  # config :neverland, NeverlandWeb.Endpoint,
+  #   force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
 
@@ -111,7 +111,39 @@ if config_env() == :prod do
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:
   #
-  #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
+  # config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+Application.ensure_all_started(:dotenv, :certifi)
+
+%{values: myenv} = Dotenv.load()
+IO.puts("email-user: #{inspect(myenv["SMTP_USERNAME"])}")
+
+cacerts = :certifi.cacerts()
+# IO.puts("certifi: #{inspect(cacerts)}")
+
+config :neverland, Neverland.Mailer,
+  adapter: Swoosh.Adapters.SMTP,
+  relay: "smtp.exmail.qq.com",
+  username: myenv["SMTP_USERNAME"],
+  password: myenv["SMTP_PASSWORD"],
+  ssl: true,
+  tls: :never,
+  auth: :always,
+  port: 465,
+  retries: 2,
+  no_mx_lookups: false,
+  sockopts: [
+    versions: [:"tlsv1.2", :"tlsv1.3"],
+    verify: :verify_peer,
+    cacerts: cacerts,
+    depth: 3,
+    customize_hostname_check: [
+      match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+    ],
+    server_name_indication: ~c"smtp.exmail.qq.com"
+  ]
+
+config :swoosh, :api_client, Swoosh.ApiClient.Hackney

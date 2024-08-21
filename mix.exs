@@ -20,7 +20,7 @@ defmodule Neverland.MixProject do
     [
       mod: {Neverland.Application, []},
       # 添加 :dotenv
-      extra_applications: [:logger, :runtime_tools, :dotenv]
+      extra_applications: [:logger, :runtime_tools, :dotenv, :certifi, :swoosh]
     ]
   end
 
@@ -60,7 +60,7 @@ defmodule Neverland.MixProject do
       },
       {:swoosh, "~> 1.5"},
       {:certifi, "~> 2.5"},
-      {:gen_smtp, "~> 1.0"},
+      {:gen_smtp, "~> 1.2"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

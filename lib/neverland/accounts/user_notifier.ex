@@ -3,7 +3,19 @@ defmodule Neverland.Accounts.UserNotifier do
 
   alias Neverland.Mailer
 
-  # Delivers the email using the application mailer.
+  def send_email() do
+    email =
+      new()
+      |> to("xuehongwei@illufly.com")
+      |> from({"🦋 Neverland", "support@illufly.com"})
+      |> subject("Test Email")
+      |> text_body("This is a test email.")
+
+    with {:ok, _metadata} <- Mailer.deliver(email) do
+      {:ok, email}
+    end
+  end
+
   defp deliver(recipient, subject, body) do
     email =
       new()
