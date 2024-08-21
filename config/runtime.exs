@@ -116,10 +116,9 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
-Application.ensure_all_started(:dotenv, :certifi)
+# Application.ensure_all_started(:dotenv, :certifi)
 
 %{values: myenv} = Dotenv.load()
-IO.puts("email-user: #{inspect(myenv["SMTP_USERNAME"])}")
 
 cacerts = :certifi.cacerts()
 # IO.puts("certifi: #{inspect(cacerts)}")
