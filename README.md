@@ -138,3 +138,10 @@ sudo service nginx restart
 确保 Phoenix 应用正在运行，并且监听在 4000 端口上。
 如果你使用的是 HTTPS，确保你已经正确配置了 SSL/TLS 证书。
 如果你有任何问题，可以查看 Nginx 的日志文件来诊断问题，通常位于 /var/log/nginx/access.log 和 /var/log/nginx/error.log。
+
+# 邮件服务器
+
+测试邮件服务器配置，确保可以发送邮件。
+```shell
+openssl s_client -connect smtp.exmail.qq.com:465
+```
