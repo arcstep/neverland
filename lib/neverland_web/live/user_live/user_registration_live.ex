@@ -29,17 +29,40 @@ defmodule NeverlandWeb.UserRegistrationLive do
         method="post"
       >
         <.error :if={@check_errors}>
-          咦？你的资料中有什么不太对劲，赶紧检查一下吧！
+          请检查表单中的错误！
         </.error>
 
-        <.input field={@form[:email]} type="email" label="电子邮箱" required />
+        <.input field={@form[:email]} type="email" label="帐户" required />
         <.input field={@form[:password]} type="password" label="密码" required />
+
+        <div class="mt-4">
+          <label>
+            <input type="checkbox" phx-click="toggle_privacy_policy" checked={@privacy_policy} />
+            我已阅读并同意
+          </label>
+          <a href="#" phx-click="show_privacy_policy" class="text-brand hover:underline">
+            《用户同意条款》
+          </a>
+        </div>
 
         <:actions>
           <.button phx-disable-with="Creating account..." class="w-full">创建一个智能体</.button>
         </:actions>
       </.simple_form>
     </div>
+
+    <.modal
+      :if={@show_privacy_policy}
+      id="user-agree-modal"
+      show
+      on_cancel={JS.patch(~p"/users/register")}
+    >
+      <.live_component
+        id="user-agree-form"
+        module={NeverlandWeb.UserAggree.FormComponent}
+        patch={~p"/users/register"}
+      />
+    </.modal>
     """
   end
 
@@ -48,34 +71,43 @@ defmodule NeverlandWeb.UserRegistrationLive do
 
     socket =
       socket
-      |> assign(trigger_submit: false, check_errors: false)
+      |> assign(
+        trigger_submit: false,
+        check_errors: false,
+        show_privacy_policy: false,
+        privacy_policy: false
+      )
       |> assign_form(changeset)
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_user(user_params) do
-      {:ok, user} ->
-        case Accounts.deliver_user_confirmation_instructions(
-               user,
-               &url(~p"/users/confirm/#{&1}")
-             ) do
-          {:ok, _} ->
-            changeset = Accounts.change_user_registration(user)
-            {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+    if not socket.assigns.privacy_policy do
+      {:noreply, put_flash(socket, :error, "您必须同意《用户同意条款》才能注册。")}
+    else
+      case Accounts.register_user(user_params) do
+        {:ok, user} ->
+          case Accounts.deliver_user_confirmation_instructions(
+                 user,
+                 &url(~p"/users/confirm/#{&1}")
+               ) do
+            {:ok, _} ->
+              changeset = Accounts.change_user_registration(user)
+              {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 
-          {:error, {:retries_exceeded, {:network_failure, host, reason}}} ->
-            Logger.error("Network failure when trying to reach #{host}: #{inspect(reason)}")
-            {:noreply, put_flash(socket, :error, "Network error, please try again later.")}
+            {:error, {:retries_exceeded, {:network_failure, host, reason}}} ->
+              Logger.error("Network failure when trying to reach #{host}: #{inspect(reason)}")
+              {:noreply, put_flash(socket, :error, "Network error, please try again later.")}
 
-          {:error, reason} ->
-            Logger.error("Unexpected error: #{inspect(reason)}")
-            {:noreply, put_flash(socket, :error, "An unexpected error occurred.")}
-        end
+            {:error, reason} ->
+              Logger.error("Unexpected error: #{inspect(reason)}")
+              {:noreply, put_flash(socket, :error, "An unexpected error occurred.")}
+          end
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+      end
     end
   end
 
@@ -84,13 +116,19 @@ defmodule NeverlandWeb.UserRegistrationLive do
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "user")
+  def handle_event("toggle_privacy_policy", _params, socket) do
+    {:noreply, assign(socket, privacy_policy: !socket.assigns.privacy_policy)}
+  end
 
-    if changeset.valid? do
-      assign(socket, form: form, check_errors: false)
-    else
-      assign(socket, form: form)
-    end
+  def handle_event("show_privacy_policy", _params, socket) do
+    {:noreply, assign(socket, show_privacy_policy: true)}
+  end
+
+  def handle_event("close_privacy_policy", _params, socket) do
+    {:noreply, assign(socket, show_privacy_policy: false)}
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, form: Phoenix.HTML.FormData.to_form(changeset, []))
   end
 end

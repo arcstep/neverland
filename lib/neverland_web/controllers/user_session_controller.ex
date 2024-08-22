@@ -5,17 +5,17 @@ defmodule NeverlandWeb.UserSessionController do
   alias NeverlandWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
-    create(conn, params, "Account created successfully!")
+    create(conn, params, "登录成功！")
   end
 
   def create(conn, %{"_action" => "password_updated"} = params) do
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "密码更新成功!")
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "欢迎回来!")
   end
 
   defp create(conn, %{"user" => user_params}, info) do
@@ -28,7 +28,7 @@ defmodule NeverlandWeb.UserSessionController do
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
       conn
-      |> put_flash(:error, "Invalid email or password")
+      |> put_flash(:error, "无效的帐户名或密码")
       |> put_flash(:email, String.slice(email, 0, 160))
       |> redirect(to: ~p"/users/log_in")
     end
@@ -36,7 +36,7 @@ defmodule NeverlandWeb.UserSessionController do
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, "帐户退出成功。")
     |> UserAuth.log_out_user()
   end
 end

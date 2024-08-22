@@ -28,6 +28,8 @@ defmodule Neverland.Accounts do
   @doc """
   Gets a user by email and password.
 
+  但必须验证后才能正常登录，否则返回验证失败。
+
   ## Examples
 
       iex> get_user_by_email_and_password("foo@example.com", "correct_password")
@@ -40,7 +42,7 @@ defmodule Neverland.Accounts do
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
-    if User.valid_password?(user, password), do: user
+    if User.valid_password?(user, password) and user.confirmed_at, do: user
   end
 
   @doc """

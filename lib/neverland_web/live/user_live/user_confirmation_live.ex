@@ -6,12 +6,12 @@ defmodule NeverlandWeb.UserConfirmationLive do
   def render(%{live_action: :edit} = assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">确认您需要创立帐户</.header>
+      <.header class="text-center">确认是您本人要求创立新帐户吗？</.header>
 
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
         <:actions>
-          <.button phx-disable-with="Confirming..." class="w-full">确认我的帐户</.button>
+          <.button phx-disable-with="Confirming..." class="w-full">确认</.button>
         </:actions>
       </.simple_form>
 
@@ -35,8 +35,8 @@ defmodule NeverlandWeb.UserConfirmationLive do
         {
           :noreply,
           socket
-          |> put_flash(:info, "用户确认成功！")
-          |> redirect(to: ~p"/")
+          |> put_flash(:info, "成功创建新帐户！")
+          |> redirect(to: ~p"/users/log_in")
         }
 
       :error ->
