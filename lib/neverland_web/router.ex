@@ -22,6 +22,7 @@ defmodule NeverlandWeb.Router do
 
     get "/", PageController, :home
     live "/users/confirm/:token", UserConfirmationLive, :edit
+    live "/text_reviews", TextReviewLive, :index
   end
 
   # Other scopes may use custom stacks.
