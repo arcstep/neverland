@@ -56,8 +56,7 @@ defmodule Neverland.Accounts.User do
     |> validate_length(:password,
       min: 12,
       max: 72,
-      too_short: "密码长度至少为 %{count} 个字符",
-      too_long: "密码长度最多为 %{count} 个字符"
+      message: {"密码长度不能少于%{min}或多于%{max}", [min: 12, max: 72]}
     )
     # Examples of additional password validation:
     |> validate_format(:password, ~r/[a-z]/, message: "包含至少一个小写字符")

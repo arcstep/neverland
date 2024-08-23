@@ -2,7 +2,7 @@ defmodule NeverlandWeb.TextReviewLive do
   use NeverlandWeb, :live_view
 
   alias Neverland.Content
-  alias Neverland.Content.TextReview
+  # alias Neverland.Content.TextReview
 
   def render(assigns) do
     ~H"""
