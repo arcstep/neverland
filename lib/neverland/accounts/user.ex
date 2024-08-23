@@ -160,7 +160,7 @@ defmodule Neverland.Accounts.User do
     if valid_password?(changeset.data, password) do
       changeset
     else
-      add_error(changeset, :current_password, "密码构成不合法")
+      add_error(changeset, :current_password, "密码不合理")
     end
   end
 end

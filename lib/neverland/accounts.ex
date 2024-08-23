@@ -42,7 +42,7 @@ defmodule Neverland.Accounts do
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
-    if User.valid_password?(user, password) and user.confirmed_at, do: user
+    if User.valid_password?(user, password), do: user
   end
 
   @doc """
@@ -76,17 +76,41 @@ defmodule Neverland.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, user} ->
-        deliver_user_confirmation_instructions(user, &"/users/confirm/#{&1}")
+    # Ensure that :email key exists and is not nil
+    IO.puts("register_user: #{inspect(attrs)}")
 
-        {:ok, user}
+    case attrs["email"] do
+      nil ->
+        {:error, :missing_email}
 
-      {:error, changeset} ->
-        {:error, changeset}
+      email ->
+        # Check if the user already exists by email
+        existing_user = Repo.get_by(User, email: email)
+
+        case existing_user do
+          nil ->
+            # User does not exist, proceed with registration
+            %User{}
+            |> User.registration_changeset(attrs)
+            |> Repo.insert()
+            |> case do
+              {:ok, user} ->
+                deliver_user_confirmation_instructions(user, &"/users/confirm/#{&1}")
+                {:ok, user}
+
+              {:error, changeset} ->
+                {:error, changeset}
+            end
+
+          user when user.confirmed_at == nil ->
+            # User exists but is not confirmed, allow registration
+            deliver_user_confirmation_instructions(user, &"/users/confirm/#{&1}")
+            {:ok, user}
+
+          _ ->
+            # User exists and is already confirmed, return error
+            {:error, :already_registered}
+        end
     end
   end
 

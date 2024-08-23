@@ -25,8 +25,8 @@ defmodule NeverlandWeb.UserRegistrationLive do
         phx-submit="save"
         phx-change="validate"
         phx-trigger-action={@trigger_submit}
-        action={~p"/users/log_in?_action=registered"}
-        method="post"
+        action={~p"/users/log_in"}
+        method="get"
       >
         <.error :if={@check_errors}>
           请检查表单中的错误！
@@ -83,6 +83,8 @@ defmodule NeverlandWeb.UserRegistrationLive do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
+    # IO.puts("register user: #{inspect(user_params)}")
+
     if not socket.assigns.privacy_policy do
       {:noreply, put_flash(socket, :error, "您必须同意《用户同意条款》才能注册。")}
     else
@@ -112,6 +114,7 @@ defmodule NeverlandWeb.UserRegistrationLive do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
+    # IO.puts("validate user: #{inspect(user_params)}")
     changeset = Accounts.change_user_registration(%User{}, user_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
